@@ -4,12 +4,17 @@ version = "0.1.0"
 description = "Django REST Framework IIIF Store"
 license = "MIT"
 authors = ["Finlay McCourt <finlay.mccourt@digirati.com>"]
-readme = "README.rst"
+readme = "README.md"
+packages = [
+    { include = "iiif_store" },
+]
+
 
 [tool.poetry.dependencies]
 python = "^3.8"
 
 [tool.poetry.dev-dependencies]
+pytest = "^3.6"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
