@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('iiif_store', '0001_initial'),
+        ("iiif_store", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='storediiifresource',
-            name='original_id',
-            field=models.URLField(unique=True, verbose_name='IIIF id'),
+            model_name="storediiifresource",
+            name="original_id",
+            field=models.URLField(unique=True, verbose_name="IIIF id"),
         ),
     ]

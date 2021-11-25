@@ -19,7 +19,8 @@ class IIIFSerializer(serializers.HyperlinkedModelSerializer):
 
 class StoredIIIFResourceSerializer(serializers.HyperlinkedModelSerializer):
     original_id = serializers.CharField(
-        required=False, validators=[UniqueValidator(queryset=StoredIIIFResource.objects.all())]
+        required=False,
+        validators=[UniqueValidator(queryset=StoredIIIFResource.objects.all())],
     )
     thumbnail = serializers.JSONField(required=False)
     label = serializers.JSONField(required=False)
@@ -33,7 +34,9 @@ class StoredIIIFResourceSerializer(serializers.HyperlinkedModelSerializer):
         self.initial_data["thumbnail"] = self.initial_data.get("iiif_json", {}).get(
             "thumbnail", {}
         )
-        self.initial_data["label"] = self.initial_data.get("iiif_json", {}).get("label", {})
+        self.initial_data["label"] = self.initial_data.get("iiif_json", {}).get(
+            "label", {}
+        )
         return super().is_valid(**kwargs)
 
     def save(self, **kwargs):
@@ -46,7 +49,9 @@ class StoredIIIFResourceSerializer(serializers.HyperlinkedModelSerializer):
                 f"No instance supplied, looking for existing StoredIIIFResources: ({original_id})"
             )
             try:
-                existing_resource = StoredIIIFResource.objects.get(original_id=original_id)
+                existing_resource = StoredIIIFResource.objects.get(
+                    original_id=original_id
+                )
                 if existing_resource:
                     logger.debug(
                         f"Using existing StoredIIIFResource as instance: ({original_id}, {existing_resource.id})"

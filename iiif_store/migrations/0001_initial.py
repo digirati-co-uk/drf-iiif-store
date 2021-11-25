@@ -10,24 +10,45 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='StoredIIIFResource',
+            name="StoredIIIFResource",
             fields=[
-                ('created', model_utils.fields.AutoCreatedField(default=django.utils.timezone.now, editable=False, verbose_name='created')),
-                ('modified', model_utils.fields.AutoLastModifiedField(default=django.utils.timezone.now, editable=False, verbose_name='modified')),
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('original_id', models.URLField(verbose_name='IIIF id')),
-                ('iiif_type', models.CharField(max_length=30)),
-                ('label', models.JSONField(blank=True, null=True)),
-                ('thumbnail', models.JSONField(blank=True, null=True)),
-                ('iiif_json', models.JSONField(blank=True)),
+                (
+                    "created",
+                    model_utils.fields.AutoCreatedField(
+                        default=django.utils.timezone.now,
+                        editable=False,
+                        verbose_name="created",
+                    ),
+                ),
+                (
+                    "modified",
+                    model_utils.fields.AutoLastModifiedField(
+                        default=django.utils.timezone.now,
+                        editable=False,
+                        verbose_name="modified",
+                    ),
+                ),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                ("original_id", models.URLField(verbose_name="IIIF id")),
+                ("iiif_type", models.CharField(max_length=30)),
+                ("label", models.JSONField(blank=True, null=True)),
+                ("thumbnail", models.JSONField(blank=True, null=True)),
+                ("iiif_json", models.JSONField(blank=True)),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
     ]
