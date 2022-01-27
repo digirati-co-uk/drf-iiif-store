@@ -5,6 +5,7 @@ from ..views import (
     StoredIIIFResourceViewSet,
 )
 
+app_name = 'iiif_store'
 
 router = routers.DefaultRouter()
 router.register("resource", StoredIIIFResourceViewSet)
