@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  test_container:
+    build:
+      context: ../
+      dockerfile: ./example_project/Dockerfile
+    depends_on:
+      - postgres
+    links:
+      - postgres
+    env_file:
+      - test_env
+    ports:
+      - 8000:8000
+
+  postgres:
+    hostname: postgres
+    image: postgis/postgis
+    env_file:
+      - test_env

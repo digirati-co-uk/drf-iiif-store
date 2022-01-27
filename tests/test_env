@@ -1,0 +1,13 @@
+# General
+MIGRATE=True
+LOAD=True
+DJANGO_DEBUG=True
+WAITRESS=False
+# PostgreSQL
+# ------------------------------------------------------------------------------
+POSTGRES_HOST=postgres
+POSTGRES_PORT=5432
+POSTGRES_DB=postgres
+POSTGRES_USER=postgres 
+POSTGRES_PASSWORD=postgres_password
+DATABASE_URL=postgres://postgres:postgres_password@postgres:5432/postgres
