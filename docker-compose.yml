@@ -1,0 +1,30 @@
+version: "3"
+
+volumes:
+  local_postgres_data: {}
+  local_postgres_data_backups: {}
+
+services:
+  iiif_store_example:
+    build:
+      context: .
+      dockerfile: ./example_project/Dockerfile
+    depends_on:
+      - postgres
+    links:
+      - postgres
+    volumes:
+      - ./iiif_store:/app/iiif_store
+    env_file:
+      - .env
+    ports:
+      - "${DOCKER_COMPOSE_WEB_PORT:-8000}:8000"
+
+  postgres:
+    hostname: postgres
+    image: postgis/postgis
+    volumes:
+      - local_postgres_data:/var/lib/postgresql/data
+      - local_postgres_data_backups:/backups
+    env_file:
+      - .env
