@@ -3,12 +3,10 @@ from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_SETTINGS = {
-        "CANONICAL_HOSTNAME": ""
-        }
+DEFAULT_SETTINGS = {"CANONICAL_HOSTNAME": ""}
+
 
 class AppSettings(object):
-
     def __init__(self, settings_key=None, default_settings={}):
         self.settings_key = settings_key
         self.default_settings = default_settings
@@ -32,5 +30,6 @@ class AppSettings(object):
         # Cache the result
         setattr(self, attr, val)
         return val
+
 
 iiif_store_settings = AppSettings("IIIF_STORE", DEFAULT_SETTINGS)

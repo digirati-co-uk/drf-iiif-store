@@ -3,7 +3,7 @@ from ..views import (
     IIIFResourceViewSet,
 )
 
-app_name = 'iiif_store'
+app_name = "iiif_store"
 
 router = routers.DefaultRouter()
 router.register("iiif", IIIFResourceViewSet)

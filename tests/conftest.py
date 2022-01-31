@@ -16,6 +16,7 @@ def tests_dir():
 def docker_compose_file(pytestconfig):
     return pathlib.Path(__file__).resolve().parent / "docker-compose.test.yml"
 
+
 @pytest.fixture(scope="session")
 def http_service(docker_ip, docker_services):
     """
@@ -30,5 +31,3 @@ def http_service(docker_ip, docker_services):
         timeout=300.0, pause=0.1, check=lambda: is_responsive_404(url404)
     )
     return url
-
-
