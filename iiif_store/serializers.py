@@ -12,14 +12,17 @@ class IIIFSummarySerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = IIIFResource
         fields = [
-            "id",
+            "url",
             "iiif_type",
-            "created",
-            "modified",
-            "original_id",
             "label",
             "thumbnail",
         ]
+        extra_kwargs = {
+            "url": {
+                "view_name": "iiif_store:iiifresource-detail",
+                "lookup_field": "id",
+            }
+        }
 
 
 class IIIFSerializer(serializers.ModelSerializer):
@@ -35,6 +38,7 @@ class IIIFResourceSummarySerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = IIIFResource
         fields = [
+            "url",
             "id",
             "iiif_type",
             "created",
@@ -43,6 +47,12 @@ class IIIFResourceSummarySerializer(serializers.HyperlinkedModelSerializer):
             "label",
             "thumbnail",
         ]
+        extra_kwargs = {
+            "url": {
+                "view_name": "api:iiif_store:iiifresource-detail",
+                "lookup_field": "id",
+            }
+        }
 
 
 class IIIFResourceSerializer(serializers.HyperlinkedModelSerializer):

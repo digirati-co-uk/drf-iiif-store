@@ -158,5 +158,5 @@ REST_FRAMEWORK = {
 }
 
 IIIF_STORE = {
-    "CANONICAL_HOSTNAME": env.str("CANONICAL_HOSTNAME", "https://localhost:8000")
+    "CANONICAL_HOSTNAME": env.str("CANONICAL_HOSTNAME", "http://localhost:8000")
 }

@@ -5,6 +5,6 @@ from ..views import (
 
 app_name = "iiif_store"
 
-router = routers.DefaultRouter()
+router = routers.DefaultRouter(trailing_slash=False)
 router.register("iiif", IIIFResourceViewSet)
 urlpatterns = router.urls

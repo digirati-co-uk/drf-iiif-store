@@ -1,7 +1,5 @@
 import json
-import os
 import pytest
-import requests
 import pathlib
 
 from .utils import is_responsive_404
@@ -31,3 +29,10 @@ def http_service(docker_ip, docker_services):
         timeout=300.0, pause=0.1, check=lambda: is_responsive_404(url404)
     )
     return url
+
+
+@pytest.fixture
+def test_iiif3_manifest(tests_dir):
+    return json.load(
+        (tests_dir / "fixtures/iiif3_forager.json").open(encoding="utf-8")
+    )
