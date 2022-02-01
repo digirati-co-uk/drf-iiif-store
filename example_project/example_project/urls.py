@@ -20,5 +20,5 @@ from django.conf import settings
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/", include("api.urls")),
-    path("iiif/", include("iiif_store.urls.public")),
+    path("", include("iiif_store.urls.public")),
 ]

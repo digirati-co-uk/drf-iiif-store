@@ -1,12 +1,10 @@
-from django.urls import path
-from rest_framework.urlpatterns import format_suffix_patterns
 from rest_framework import routers
 from ..views import (
-    StoredIIIFResourceViewSet,
+    IIIFResourceViewSet,
 )
 
-app_name = 'iiif_store'
+app_name = "iiif_store"
 
-router = routers.DefaultRouter()
-router.register("resource", StoredIIIFResourceViewSet)
+router = routers.DefaultRouter(trailing_slash=False)
+router.register("iiif", IIIFResourceViewSet)
 urlpatterns = router.urls
