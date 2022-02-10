@@ -1,6 +1,11 @@
 import logging
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
+
+from search_service.serializers import (
+        BaseModelToIndexableSerializer, 
+        )
+
 from .models import (
     IIIFResource,
 )
@@ -107,3 +112,14 @@ class IIIFResourceSerializer(serializers.HyperlinkedModelSerializer):
             "thumbnail",
             "iiif_json",
         ]
+
+
+class IIIFResourceToIndexableSerializer(BaseModelToIndexableSerializer): 
+    def to_indexables(self, instance):
+        return [{
+                "type": "descriptive", 
+                "subtype": "label", 
+                "original_content": instance.original_id, 
+                "indexable_text": instance.original_id, 
+                }]
+

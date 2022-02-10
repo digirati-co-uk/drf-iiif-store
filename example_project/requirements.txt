@@ -10,3 +10,4 @@ django-model-utils==4.2.0
 django-filter==21.1
 ordered-set==4.0.2
 django-environ==0.8.1
+git+https://${GITHUB_TOKEN}@github.com/digirati-co-uk/drf-search-service.git@feature/FLOR-27-removing-iiif-specific-code

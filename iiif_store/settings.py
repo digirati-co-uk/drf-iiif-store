@@ -3,7 +3,11 @@ from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_SETTINGS = {"CANONICAL_HOSTNAME": ""}
+DEFAULT_SETTINGS = {
+        "CANONICAL_HOSTNAME": "", 
+        "INDEX_IIIF_RESOURCES": True, # If True, IIIFResources will be indexed into the search_service on save. 
+
+        }
 
 
 class AppSettings(object):
@@ -26,10 +30,11 @@ class AppSettings(object):
             val = self.user_settings[attr]
         except KeyError:
             # Fall back to defaults
-            val = self.defaults[attr]
+            val = self.default_settings[attr]
         # Cache the result
         setattr(self, attr, val)
         return val
+
 
 
 iiif_store_settings = AppSettings("IIIF_STORE", DEFAULT_SETTINGS)
