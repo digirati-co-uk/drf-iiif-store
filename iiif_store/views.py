@@ -4,11 +4,15 @@ import logging
 from rest_framework import viewsets
 from rest_framework.decorators import action
 
+from rest_framework.response import Response
+
 # Local imports
 from .models import (
     IIIFResource,
 )
 from .serializers import (
+    SourceIIIFToIIIFResourcesSerializer, 
+    IIIFResourceCreateSerializer, 
     IIIFSerializer,
     IIIFSummarySerializer,
     IIIFResourceSerializer,
@@ -27,10 +31,11 @@ class IIIFResourceViewSet(ActionBasedSerializerMixin, viewsets.ModelViewSet):
     queryset = IIIFResource.objects.all()
     serializer_mapping = {
         "default": IIIFResourceSerializer,
+        "create": SourceIIIFToIIIFResourcesSerializer,
+        # "create": IIIFResourceCreateSerializer,
         "list": IIIFResourceSummarySerializer,
     }
     lookup_field = "id"
-
 
 class IIIFResourcePublicViewSet(
     ActionBasedSerializerMixin, viewsets.ReadOnlyModelViewSet
