@@ -1,7 +1,11 @@
 import logging
+import bleach
+from bs4 import BeautifulSoup
+import dateutil.parser
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from django.contrib.contenttypes.models import ContentType
+from django.utils.translation import get_language
 
 from search_service.serializers import (
     BaseModelToIndexableSerializer,
@@ -12,6 +16,8 @@ from search_service.models import ResourceRelationship
 from .models import (
     IIIFResource,
 )
+
+default_lang = get_language()
 
 logger = logging.getLogger(__name__)
 
@@ -73,13 +79,9 @@ class IIIFResourceRelationshipCreateSerializer(serializers.ModelSerializer):
         relationship_type = data.get("type", "isPartOf")
         return {
             "source_id": source_resource.id,
-            "source_content_type": ContentType.objects.get_for_model(
-                source_resource
-            ),
+            "source_content_type": ContentType.objects.get_for_model(source_resource),
             "target_id": target_resource.id,
-            "target_content_type": ContentType.objects.get_for_model(
-                target_resource
-            ),
+            "target_content_type": ContentType.objects.get_for_model(target_resource),
             "type": relationship_type,
         }
 
@@ -206,12 +208,133 @@ class IIIFResourceSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class IIIFResourceToIndexableSerializer(BaseModelToIndexableSerializer):
-    def to_indexables(self, instance):
-        return [
-            {
-                "type": "descriptive",
-                "subtype": "label",
-                "original_content": instance.original_id,
-                "indexable_text": instance.original_id,
+
+    indexable_iiif_fields = [
+        {"key": "label", "indexable_type": "descriptive", "index_as": "text"},
+        {
+            "key": "requiredStatement",
+            "indexable_type": "descriptive",
+            "index_as": "text",
+        },
+        {"key": "summary", "indexable_type": "descriptive", "index_as": "text"},
+        {"key": "metadata", "indexable_type": "metadata", "index_as": "text"},
+        {"key": "navDate", "indexable_type": "descriptive", "index_as": "date"},
+    ]
+
+    def _text_indexable(
+        self,
+        type,
+        subtype,
+        value,
+        language,
+    ):
+        return {
+            "type": type,
+            "subtype": subtype.lower(),
+            "indexable_text": BeautifulSoup(value, "html.parser").text,
+            "original_content": str({subtype: bleach.clean(value)}),
+            "language": language,
+        }
+
+    def _date_indexable(
+        self,
+        type,
+        subtype,
+        value,
+    ):
+        try:
+            parsed_date = dateutil.parser.parse(value)
+        except ValueError:
+            parsed_date = None
+        if parsed_date:
+            return {
+                "type": type,
+                "subtype": subtype.lower(),
+                "indexable_date_range_start": parsed_date,
+                "indexable_date_range_end": parsed_date,
+                "original_content": str({subtype: bleach.clean(value)}),
             }
-        ]
+
+    def _normalise_field(self, field_data):
+        if isinstance(field_data, dict):
+            return [field_data]
+        elif isinstance(field_data, list):
+            return field_data
+        else:
+            return [{"none": field_data}]
+
+    def _normalise_language(self, language):
+        if language in ["@none", "none"]:
+            return default_lang
+        else:
+            return language
+
+    def _indexables_from_field(
+        self,
+        field_instance,
+        key=None,
+        indexable_type="descriptive",
+        index_as="text",
+    ):
+        indexables = []
+        if not field_instance.get("label"):
+            for val_lang, vals in field_instance.items():
+                lang = self._normalise_language(val_lang)
+                if vals:
+                    for str_value in map(str, vals):
+                        if index_as == "text":
+                            indexables.append(
+                                self._text_indexable(
+                                    type=indexable_type,
+                                    subtype=key,
+                                    value=str_value,
+                                    language=lang,
+                                )
+                            )
+                        elif index_as == "date":
+                            indexables.append(
+                                self._date_indexable(
+                                    type=indexable_type,
+                                    subtype=key,
+                                    value=str_value,
+                                )
+                            )
+        else:
+            subtype = key
+            label_values = field_instance.get("label", {})
+            if field_values := field_instance.get("value"):
+                for val_lang, vals in field_values.items():
+                    if labels := label_values.get(val_lang):
+                        subtype = labels[0]
+                    lang = self._normalise_language(val_lang)
+                    for str_value in map(str, vals):
+                        if index_as == "text":
+                            indexables.append(
+                                self._text_indexable(
+                                    type=indexable_type,
+                                    subtype=subtype,
+                                    value=str_value,
+                                    language=lang,
+                                )
+                            )
+                        elif index_as == "date":
+                            indexables.append(
+                                self._date_indexable(
+                                    type=indexable_type,
+                                    subtype=subtype,
+                                    value=str_value,
+                                )
+                            )
+        logger.info(indexables)
+        return indexables
+
+    def to_indexables(self, instance):
+        indexables = []
+        for field_lookup in self.indexable_iiif_fields:
+            if field := instance.iiif_json.get(field_lookup.get("key")):
+                norm_field = self._normalise_field(field)
+                for field_instance in norm_field:
+                    indexables.extend(
+                        self._indexables_from_field(field_instance, **field_lookup)
+                    )
+        return indexables
