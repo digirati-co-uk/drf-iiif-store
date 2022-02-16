@@ -96,7 +96,7 @@ def test_iiif_store_public_multilingual_iiif_get_manifest(http_service, simple_m
     assert response_json == expected_manifest
 
 
-def test_iiif_store_api_multilingual_iiif_indexables(http_service):
+def test_search_service_api_multilingual_iiif_indexables(http_service):
     app_endpoint = "api/search_service"
     test_endpoint = "indexables"
     status = 200
@@ -178,39 +178,18 @@ def test_iiif_store_api_multilingual_iiif_delete(http_service):
     assert response.status_code == status
 
     test_endpoint = f"iiif/{test_data_store.get('canvas')}"
-    status = 204
-    response = requests.delete(
-        f"{http_service}/{app_endpoint}/{test_endpoint}", headers=test_headers
-    )
-    assert response.status_code == status
-
-    status = 404
     response = requests.get(
         f"{http_service}/{app_endpoint}/{test_endpoint}", headers=test_headers
     )
     assert response.status_code == status
 
     test_endpoint = f"iiif/{test_data_store.get('annotation')}"
-    status = 204
-    response = requests.delete(
-        f"{http_service}/{app_endpoint}/{test_endpoint}", headers=test_headers
-    )
-    assert response.status_code == status
-
-    status = 404
     response = requests.get(
         f"{http_service}/{app_endpoint}/{test_endpoint}", headers=test_headers
     )
     assert response.status_code == status
 
     test_endpoint = f"iiif/{test_data_store.get('annotationpage')}"
-    status = 204
-    response = requests.delete(
-        f"{http_service}/{app_endpoint}/{test_endpoint}", headers=test_headers
-    )
-    assert response.status_code == status
-
-    status = 404
     response = requests.get(
         f"{http_service}/{app_endpoint}/{test_endpoint}", headers=test_headers
     )

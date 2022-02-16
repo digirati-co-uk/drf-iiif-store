@@ -1,6 +1,6 @@
 import logging
 
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
 
 from .models import IIIFResource
@@ -16,3 +16,17 @@ def index_iiif_resource(sender, instance, **kwargs):
         logger.debug(f"Running the IIIFResourceIndexingTask for: ({instance.id})")
         task = IIIFResourceIndexingTask(instance.id)
         task.run()
+
+
+@receiver(pre_delete, sender=IIIFResource)
+def delete_iiif_manifest_partof_relations(sender, instance, **kwargs):
+    if instance.iiif_type in ["manifest"]:
+        resources = IIIFResource.objects.filter(
+            id__in=instance.relationship_targets.filter(type="isPartOf").values_list(
+                "source_id", flat=True
+            )
+        )
+        logger.debug(
+            f"Deleting IIIFResources with isPartOf relationship: ({instance.id}, {resources.count()})"
+        )
+        resources.delete()
