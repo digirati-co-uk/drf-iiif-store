@@ -36,7 +36,7 @@
             ],
             "label": {
                 "en": [
-                    "18647779303_d4b942eff2_o.jpg"
+                    "Canvas label"
                 ]
             },
             "width": 5004,
@@ -80,7 +80,7 @@
     ],
     "label": {
         "en": [
-            "Mars"
+            "Manifest label"
         ]
     },
     "metadata": [
@@ -92,7 +92,7 @@
             },
             "value": {
                 "en": [
-                    "IIIF3 Store Test Manifest"
+                    "Manifest author"
                 ]
             }
         }

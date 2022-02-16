@@ -32,7 +32,7 @@ def http_service(docker_ip, docker_services):
 
 
 @pytest.fixture
-def test_iiif3_manifest(tests_dir):
+def simple_iiif3_manifest(tests_dir):
     return json.load(
-        (tests_dir / "fixtures/iiif3_forager.json").open(encoding="utf-8")
+        (tests_dir / "fixtures/simple_iiif3_manifest.json").open(encoding="utf-8")
     )
