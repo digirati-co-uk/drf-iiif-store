@@ -6,13 +6,20 @@ from rest_framework.decorators import action
 
 from rest_framework.response import Response
 
+from search_service.views import (
+    GenericSearchBaseViewSet,
+)
+
 # Local imports
 from .models import (
     IIIFResource,
 )
+from .parsers import (
+    IIIFResourceSearchParser,
+)
 from .serializers import (
-    SourceIIIFToIIIFResourcesSerializer, 
-    IIIFResourceCreateSerializer, 
+    SourceIIIFToIIIFResourcesSerializer,
+    IIIFResourceCreateSerializer,
     IIIFSerializer,
     IIIFSummarySerializer,
     IIIFResourceSerializer,
@@ -36,6 +43,7 @@ class IIIFResourceViewSet(ActionBasedSerializerMixin, viewsets.ModelViewSet):
         "list": IIIFResourceSummarySerializer,
     }
     lookup_field = "id"
+
 
 class IIIFResourcePublicViewSet(
     ActionBasedSerializerMixin, viewsets.ReadOnlyModelViewSet
@@ -65,3 +73,15 @@ class IIIFResourcePublicViewSet(
     )
     def retrieve_iiif(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)
+
+
+class IIIFResourceSearchViewSet(GenericSearchBaseViewSet):
+    queryset = IIIFResource.objects.all().distinct()
+    parser_classes = [IIIFResourceSearchParser]
+    serializer_class = IIIFResourceSummarySerializer
+
+
+class IIIFResourcePublicSearchViewSet(GenericSearchBaseViewSet):
+    queryset = IIIFResource.objects.all().distinct()
+    parser_classes = [IIIFResourceSearchParser]
+    serializer_class = IIIFSummarySerializer

@@ -194,3 +194,19 @@ def test_iiif_store_api_multilingual_iiif_delete(http_service):
         f"{http_service}/{app_endpoint}/{test_endpoint}", headers=test_headers
     )
     assert response.status_code == status
+
+
+def test_search_service_api_multilingual_iiif_indexable_deleted(http_service):
+    app_endpoint = "api/search_service"
+    test_endpoint = "indexables"
+    status = 200
+    response = requests.get(
+        f"{http_service}/{app_endpoint}/{test_endpoint}", headers=test_headers
+    )
+    assert response.status_code == status
+    response_json = response.json()
+    assert response_json.get("count") == 0
+    assert response_json.get("next") == None
+    assert response_json.get("previous") == None
+    assert len(response_json.get("results")) == 0
+
