@@ -44,20 +44,27 @@ def test_iiif_store_api_iiif_create_manifest(http_service, test_iiif3_manifest):
     )
     assert response.status_code == status
     response_json = response.json()
-    assert response_json.get("id") is not None
-    test_data_store["test_manifest_uuid"] = response_json.get("id")
-    assert response_json.get("iiif_type") == post_json.get("iiif_type").lower()
-    assert response_json.get("original_id") == test_iiif3_manifest.get("id")
-    assert response_json.get("iiif_json").get("id") != test_iiif3_manifest.get("id")
-    assert response_json.get("label") == test_iiif3_manifest.get("label")
+    assert response_json.get("resources") is not None
+    assert response_json.get("relationships") is not None
+    assert len(response_json.get("resources")) == 4
+    assert len(response_json.get("relationships")) == 6 
+
+    manifest_response_json = response_json.get("resources")[0]
+    assert manifest_response_json.get("id") is not None
+    test_data_store["test_manifest_uuid"] = manifest_response_json.get("id")
+    assert manifest_response_json.get("iiif_type") == post_json.get("iiif_type").lower()
+    assert manifest_response_json.get("original_id") == test_iiif3_manifest.get("id")
+    assert manifest_response_json.get("iiif_json").get("id") != test_iiif3_manifest.get("id")
+    assert manifest_response_json.get("label") == test_iiif3_manifest.get("label")
     assert (
-        response_json.get("iiif_json").get("id")
+        manifest_response_json.get("iiif_json").get("id")
         == f"http://localhost:8000/iiif/manifest/{test_data_store.get('test_manifest_uuid')}/"
     )
     expected_manifest = copy.deepcopy(test_iiif3_manifest)
     expected_manifest.pop("id")
-    response_json.get("iiif_json").pop("id")
-    assert response_json.get("iiif_json") == expected_manifest
+    manifest_response_json.get("iiif_json").pop("id")
+
+    assert manifest_response_json.get("iiif_json") == expected_manifest
 
 
 def test_iiif_store_api_iiif_list(http_service, test_iiif3_manifest):
@@ -68,10 +75,10 @@ def test_iiif_store_api_iiif_list(http_service, test_iiif3_manifest):
     )
     assert response.status_code == status
     response_json = response.json()
-    assert response_json.get("count") == 1
+    assert response_json.get("count") == 4
     assert response_json.get("next") == None
     assert response_json.get("previous") == None
-    assert len(response_json.get("results")) == 1
+    assert len(response_json.get("results")) == 4
 
     manifest = response_json["results"][0]
     assert manifest.get("id") == test_data_store.get("test_manifest_uuid")
@@ -111,10 +118,10 @@ def test_iiif_store_public_iiif_list(http_service, test_iiif3_manifest):
     response = requests.get(f"{http_service}/{test_endpoint}", headers=test_headers)
     assert response.status_code == status
     response_json = response.json()
-    assert response_json.get("count") == 1
+    assert response_json.get("count") == 4
     assert response_json.get("next") == None
     assert response_json.get("previous") == None
-    assert len(response_json.get("results")) == 1
+    assert len(response_json.get("results")) == 4
 
     manifest = response_json["results"][0]
     assert manifest.get("iiif_type") == "manifest"

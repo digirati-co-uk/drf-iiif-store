@@ -1,4 +1,5 @@
 import logging
+import copy
 import bleach
 from bs4 import BeautifulSoup
 import dateutil.parser
@@ -105,7 +106,7 @@ class SourceIIIFToIIIFResourcesSerializer(serializers.Serializer):
             for parent_id in parent_ids
         ]
         child_parent_ids = [resource_id] + parent_ids
-        resources = [{"iiif_json": iiif_element}]
+        resources = [{"iiif_json": copy.deepcopy(iiif_element)}]
         if items := iiif_element.get("items"):
             for i in items:
                 res, rels = self.get_distinct_iiif_elements_and_relationships(
@@ -129,15 +130,18 @@ class SourceIIIFToIIIFResourcesSerializer(serializers.Serializer):
             data=validated_data.get("resources"), many=True
         )
         resource_serializer.is_valid(raise_exception=True)
-        resource_serializer.save()
+        resource_instances = resource_serializer.save()
 
         relationship_serializer = IIIFResourceRelationshipCreateSerializer(
             data=validated_data.get("relationships"), many=True
         )
         relationship_serializer.is_valid(raise_exception=True)
-        relationship_serializer.save()
-
-        return resource_serializer.data
+        relationship_instances = relationship_serializer.save()
+        self._data = {
+            "resources": resource_serializer.data,
+            "relationships": relationship_serializer.data,
+        }
+        return resource_instances + relationship_instances
 
 
 class IIIFSummarySerializer(serializers.HyperlinkedModelSerializer):
