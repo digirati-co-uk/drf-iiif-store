@@ -10,6 +10,13 @@ test_headers = {"Content-Type": "application/json", "Accept": "application/json"
 test_data_store = {}
 
 
+@pytest.fixture
+def simple_iiif3_manifest(tests_dir):
+    return json.load(
+        (tests_dir / "fixtures/simple_iiif3_manifest.json").open(encoding="utf-8")
+    )
+
+
 def test_iiif_store_api_root_get(http_service):
     status = 200
     response = requests.get(f"{http_service}/{app_endpoint}", headers=test_headers)
@@ -33,7 +40,6 @@ def test_iiif_store_api_iiif_list_empty(http_service):
 def test_iiif_store_api_iiif_create_manifest(http_service, simple_iiif3_manifest):
     post_json = {
         "iiif_json": simple_iiif3_manifest,
-        "iiif_type": "Manifest",
     }
     test_endpoint = "iiif"
     status = 201
@@ -54,11 +60,11 @@ def test_iiif_store_api_iiif_create_manifest(http_service, simple_iiif3_manifest
 
     manifest_response_json = response_json.get("resources")[0]
     assert manifest_response_json.get("id") is not None
-    assert manifest_response_json.get("iiif_type") == post_json.get("iiif_type").lower()
+    assert manifest_response_json.get("iiif_type") == 'manifest'
     assert manifest_response_json.get("original_id") == simple_iiif3_manifest.get("id")
-    assert manifest_response_json.get("iiif_json").get("id") != simple_iiif3_manifest.get(
+    assert manifest_response_json.get("iiif_json").get(
         "id"
-    )
+    ) != simple_iiif3_manifest.get("id")
     assert manifest_response_json.get("label") == simple_iiif3_manifest.get("label")
     assert (
         manifest_response_json.get("iiif_json").get("id")
@@ -256,14 +262,14 @@ def test_iiif_store_api_iiif_indexables(http_service):
     assert response_json.get("next") == None
     assert response_json.get("previous") == None
     assert len(response_json.get("results")) == 3
-    
+
     for indexable in response_json.get("results"):
-        if indexable.get("indexable_text") == "Canvas label": 
+        if indexable.get("indexable_text") == "Canvas label":
             assert indexable.get("resource_id") == test_data_store.get("canvas")
             assert indexable.get("type") == "descriptive"
             assert indexable.get("subtype") == "label"
             assert indexable.get("language_iso639_2") == "eng"
-        elif indexable.get("indexable_text") == "Manifest label": 
+        elif indexable.get("indexable_text") == "Manifest label":
             assert indexable.get("resource_id") == test_data_store.get("manifest")
             assert indexable.get("type") == "descriptive"
             assert indexable.get("subtype") == "label"
@@ -273,13 +279,51 @@ def test_iiif_store_api_iiif_indexables(http_service):
             assert indexable.get("type") == "metadata"
             assert indexable.get("subtype") == "author"
             assert indexable.get("language_iso639_2") == "eng"
-        else: 
+        else:
             assert True == False
-
 
 
 def test_iiif_store_api_iiif_delete(http_service):
     test_endpoint = f"iiif/{test_data_store.get('manifest')}"
+    status = 204
+    response = requests.delete(
+        f"{http_service}/{app_endpoint}/{test_endpoint}", headers=test_headers
+    )
+    assert response.status_code == status
+
+    status = 404
+    response = requests.get(
+        f"{http_service}/{app_endpoint}/{test_endpoint}", headers=test_headers
+    )
+    assert response.status_code == status
+
+    test_endpoint = f"iiif/{test_data_store.get('canvas')}"
+    status = 204
+    response = requests.delete(
+        f"{http_service}/{app_endpoint}/{test_endpoint}", headers=test_headers
+    )
+    assert response.status_code == status
+
+    status = 404
+    response = requests.get(
+        f"{http_service}/{app_endpoint}/{test_endpoint}", headers=test_headers
+    )
+    assert response.status_code == status
+
+    test_endpoint = f"iiif/{test_data_store.get('annotation')}"
+    status = 204
+    response = requests.delete(
+        f"{http_service}/{app_endpoint}/{test_endpoint}", headers=test_headers
+    )
+    assert response.status_code == status
+
+    status = 404
+    response = requests.get(
+        f"{http_service}/{app_endpoint}/{test_endpoint}", headers=test_headers
+    )
+    assert response.status_code == status
+
+    test_endpoint = f"iiif/{test_data_store.get('annotationpage')}"
     status = 204
     response = requests.delete(
         f"{http_service}/{app_endpoint}/{test_endpoint}", headers=test_headers
