@@ -56,4 +56,6 @@ fi
 
 nginx
 
+python3 /app/manage.py show_urls
+
 python3 /app/manage.py runserver 5000

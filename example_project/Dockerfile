@@ -2,8 +2,11 @@ FROM python:3.10-slim-bullseye
 
 ENV PYTHONUNBUFFERED 1
 
+ARG GITHUB_TOKEN
+ENV GITHUB_TOKEN $GITHUB_TOKEN
+
 RUN apt-get update
-RUN apt-get install -y nginx gdal-bin
+RUN apt-get install -y nginx gdal-bin git
 
 # Set up Nginx
 RUN addgroup --system nginx
