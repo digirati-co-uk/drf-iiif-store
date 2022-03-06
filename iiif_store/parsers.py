@@ -4,4 +4,4 @@ from search_service.parsers import (
 
 
 class IIIFResourceSearchParser(SearchParser):
-    pass
+    q_prefix = "indexables__"

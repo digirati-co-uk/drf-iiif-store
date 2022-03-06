@@ -155,7 +155,6 @@ class IIIFSummarySerializer(serializers.HyperlinkedModelSerializer):
         ]
         extra_kwargs = {
             "url": {
-                "view_name": "iiif_store:iiifresource-detail",
                 "lookup_field": "id",
             }
         }

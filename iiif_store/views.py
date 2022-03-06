@@ -6,6 +6,13 @@ from rest_framework.decorators import action
 
 from rest_framework.response import Response
 
+
+from search_service.filters import (
+    ResourceFilter,
+    FacetFilter,
+    RankSnippetFilter,
+)
+
 from search_service.views import (
     GenericSearchBaseViewSet,
 )
@@ -78,6 +85,7 @@ class IIIFResourcePublicViewSet(
 class IIIFResourceSearchViewSet(GenericSearchBaseViewSet):
     queryset = IIIFResource.objects.all().distinct()
     parser_classes = [IIIFResourceSearchParser]
+    filter_backends = [ResourceFilter, FacetFilter, RankSnippetFilter]
     serializer_class = IIIFResourceSummarySerializer
 
 
