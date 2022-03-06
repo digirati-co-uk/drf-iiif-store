@@ -1,6 +1,18 @@
+import pydoc
 import logging
 
 logger = logging.getLogger(__name__)
+
+def run_task(task, **kwargs): 
+    if not callable(task):
+        task_class = pydoc.locate(task)
+    else: 
+        task_class = task
+   
+    logger.debug(f'Running task: ({task_class}, {kwargs})')
+    task = task_class(**kwargs)
+    result = task.run()
+    return result
 
 
 class ActionBasedSerializerMixin(object):
