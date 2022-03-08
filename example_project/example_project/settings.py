@@ -69,6 +69,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django_extensions",
     "django_filters",
+    "django_q",
     "rest_framework",
     "search_service",
     "iiif_store",

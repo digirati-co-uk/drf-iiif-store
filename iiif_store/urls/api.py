@@ -8,5 +8,5 @@ app_name = "iiif_store"
 
 router = routers.DefaultRouter(trailing_slash=False)
 router.register("iiif", IIIFResourceViewSet)
-router.register("search", IIIFResourceSearchViewSet)
+router.register("search", IIIFResourceSearchViewSet, basename="search")
 urlpatterns = router.urls

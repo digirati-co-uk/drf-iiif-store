@@ -17,6 +17,7 @@ from search_service.models import ResourceRelationship
 from .models import (
     IIIFResource,
 )
+from .settings import iiif_store_settings
 
 default_lang = get_language()
 
@@ -97,16 +98,21 @@ class SourceIIIFToIIIFResourcesSerializer(serializers.Serializer):
     """
 
     def get_distinct_iiif_elements_and_relationships(self, iiif_element, parent_ids=[]):
-        resource_id = iiif_element.get("id")
-        relationships = [
-            {
-                "target": parent_id,
-                "source": resource_id,
-            }
-            for parent_id in parent_ids
-        ]
-        child_parent_ids = [resource_id] + parent_ids
-        resources = [{"iiif_json": copy.deepcopy(iiif_element)}]
+        if iiif_element.get("type") in iiif_store_settings.IIIF_RESOURCE_TYPES: 
+            resource_id = iiif_element.get("id")
+            relationships = [
+                {
+                    "target": parent_id,
+                    "source": resource_id,
+                }
+                for parent_id in parent_ids
+            ]
+            child_parent_ids = [resource_id] + parent_ids
+            resources = [{"iiif_json": copy.deepcopy(iiif_element)}]
+        else:
+            relationships = []
+            resources = []
+            child_parent_ids = [] + parent_ids
         if items := iiif_element.get("items"):
             for i in items:
                 res, rels = self.get_distinct_iiif_elements_and_relationships(
@@ -155,6 +161,7 @@ class IIIFSummarySerializer(serializers.HyperlinkedModelSerializer):
         ]
         extra_kwargs = {
             "url": {
+                "view_name": "iiif_store:iiifresource-detail",
                 "lookup_field": "id",
             }
         }

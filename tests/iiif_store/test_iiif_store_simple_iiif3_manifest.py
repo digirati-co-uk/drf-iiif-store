@@ -52,8 +52,8 @@ def test_iiif_store_api_iiif_create_manifest(http_service, simple_iiif3_manifest
     response_json = response.json()
     assert response_json.get("resources") is not None
     assert response_json.get("relationships") is not None
-    assert len(response_json.get("resources")) == 4
-    assert len(response_json.get("relationships")) == 6
+    assert len(response_json.get("resources")) == 2
+    assert len(response_json.get("relationships")) == 1
 
     for resource in response_json.get("resources"):
         test_data_store[resource.get("iiif_type")] = resource.get("id")
@@ -85,10 +85,10 @@ def test_iiif_store_api_iiif_list(http_service, simple_iiif3_manifest):
     )
     assert response.status_code == status
     response_json = response.json()
-    assert response_json.get("count") == 4
+    assert response_json.get("count") == 2
     assert response_json.get("next") == None
     assert response_json.get("previous") == None
-    assert len(response_json.get("results")) == 4
+    assert len(response_json.get("results")) == 2
 
     manifest = response_json["results"][0]
     assert manifest.get("id") == test_data_store.get("manifest")
@@ -139,6 +139,7 @@ def test_iiif_store_api_iiif_get_canvas(http_service):
     )
 
 
+@pytest.mark.skip(reason="Annotations not being created with default IIIF_RESOURCE_TYPES")
 def test_iiif_store_api_iiif_get_annotation(http_service):
     test_endpoint = f"iiif/{test_data_store.get('annotation')}"
     status = 200
@@ -156,6 +157,7 @@ def test_iiif_store_api_iiif_get_annotation(http_service):
     )
 
 
+@pytest.mark.skip(reason="AnnotationPages not being created with default IIIF_RESOURCE_TYPES")
 def test_iiif_store_api_iiif_get_annotationpage(http_service):
     test_endpoint = f"iiif/{test_data_store.get('annotationpage')}"
     status = 200
@@ -179,10 +181,10 @@ def test_iiif_store_public_iiif_list(http_service, simple_iiif3_manifest):
     response = requests.get(f"{http_service}/{test_endpoint}", headers=test_headers)
     assert response.status_code == status
     response_json = response.json()
-    assert response_json.get("count") == 4
+    assert response_json.get("count") == 2
     assert response_json.get("next") == None
     assert response_json.get("previous") == None
-    assert len(response_json.get("results")) == 4
+    assert len(response_json.get("results")) == 2
 
     manifest = response_json["results"][0]
     assert manifest.get("iiif_type") == "manifest"
@@ -223,6 +225,7 @@ def test_iiif_store_public_iiif_get_canvas(http_service):
     )
 
 
+@pytest.mark.skip(reason="Annotations not being created with default IIIF_RESOURCE_TYPES")
 def test_iiif_store_public_iiif_get_annotation(http_service):
     test_endpoint = f"iiif/annotation/{test_data_store.get('annotation')}"
     status = 200
@@ -236,6 +239,7 @@ def test_iiif_store_public_iiif_get_annotation(http_service):
     )
 
 
+@pytest.mark.skip(reason="AnnotationPages not being created with default IIIF_RESOURCE_TYPES")
 def test_iiif_store_public_iiif_get_annotationpage(http_service):
     test_endpoint = f"iiif/annotationpage/{test_data_store.get('annotationpage')}"
     status = 200
@@ -251,7 +255,7 @@ def test_iiif_store_public_iiif_get_annotationpage(http_service):
 
 def test_search_service_api_iiif_indexables(http_service):
     app_endpoint = "api/search_service"
-    test_endpoint = "indexables"
+    test_endpoint = "indexable"
     status = 200
     response = requests.get(
         f"{http_service}/{app_endpoint}/{test_endpoint}", headers=test_headers
@@ -317,7 +321,7 @@ def test_iiif_store_api_iiif_delete(http_service):
 
 def test_search_service_api_iiif_indexable_deleted(http_service):
     app_endpoint = "api/search_service"
-    test_endpoint = "indexables"
+    test_endpoint = "indexable"
     status = 200
     response = requests.get(
         f"{http_service}/{app_endpoint}/{test_endpoint}", headers=test_headers

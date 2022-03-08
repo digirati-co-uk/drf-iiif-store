@@ -32,8 +32,8 @@ def test_iiif_store_api_multilingual_iiif_create_manifest(http_service, simple_m
     response_json = response.json()
     assert response_json.get("resources") is not None
     assert response_json.get("relationships") is not None
-    assert len(response_json.get("resources")) == 4
-    assert len(response_json.get("relationships")) == 6
+    assert len(response_json.get("resources")) == 2
+    assert len(response_json.get("relationships")) == 1
 
     for resource in response_json.get("resources"):
         test_data_store[resource.get("iiif_type")] = resource.get("id")
@@ -98,7 +98,7 @@ def test_iiif_store_public_multilingual_iiif_get_manifest(http_service, simple_m
 
 def test_search_service_api_multilingual_iiif_indexables(http_service):
     app_endpoint = "api/search_service"
-    test_endpoint = "indexables"
+    test_endpoint = "indexable"
     status = 200
     response = requests.get(
         f"{http_service}/{app_endpoint}/{test_endpoint}", headers=test_headers
@@ -198,7 +198,7 @@ def test_iiif_store_api_multilingual_iiif_delete(http_service):
 
 def test_search_service_api_multilingual_iiif_indexable_deleted(http_service):
     app_endpoint = "api/search_service"
-    test_endpoint = "indexables"
+    test_endpoint = "indexable"
     status = 200
     response = requests.get(
         f"{http_service}/{app_endpoint}/{test_endpoint}", headers=test_headers
