@@ -1,6 +1,7 @@
 import logging
 import copy
 import bleach
+import json 
 from bs4 import BeautifulSoup
 import dateutil.parser
 from rest_framework import serializers
@@ -122,6 +123,19 @@ class SourceIIIFToIIIFResourcesSerializer(serializers.Serializer):
                 relationships.extend(rels)
         return resources, relationships
 
+    def update_parent_resources_with_child_resource_ids(self, relationships): 
+        """
+            """
+        parent_data = {rel.target_id: str(rel.target.iiif_json) for rel in relationships} 
+        for rel in relationships: 
+            parent_data[rel.target_id] = parent_data[rel.target_id].replace(
+                    rel.source.original_id, rel.source.iiif_json.get("id")
+                    )
+        for parent_id, parent_iiif_json_str in parent_data.items(): 
+            parent_resource = IIIFResource.objects.get(id=parent_id)
+            parent_resource.iiif_json = json.loads(parent_iiif_json_str)
+            parent_resource.save()
+
     def to_internal_value(self, data):
         resources, relationships = self.get_distinct_iiif_elements_and_relationships(
             data.get("iiif_json")
@@ -143,6 +157,7 @@ class SourceIIIFToIIIFResourcesSerializer(serializers.Serializer):
         )
         relationship_serializer.is_valid(raise_exception=True)
         relationship_instances = relationship_serializer.save()
+        self.update_parent_resources_with_child_resource_ids(relationship_instances)
         self._data = {
             "resources": resource_serializer.data,
             "relationships": relationship_serializer.data,
