@@ -126,7 +126,7 @@ class SourceIIIFToIIIFResourcesSerializer(serializers.Serializer):
     def update_parent_resources_with_child_resource_ids(self, relationships): 
         """
             """
-        parent_data = {rel.target_id: str(rel.target.iiif_json) for rel in relationships} 
+        parent_data = {rel.target_id: json.dumps(rel.target.iiif_json) for rel in relationships} 
         for rel in relationships: 
             parent_data[rel.target_id] = parent_data[rel.target_id].replace(
                     rel.source.original_id, rel.source.iiif_json.get("id")
