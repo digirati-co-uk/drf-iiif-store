@@ -1,0 +1,15 @@
+name: Run Pytest tests
+on:
+  pull_request:
+    types: [assigned, opened, synchronize, reopened]
+
+jobs:
+  run-pytest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v2
+      - run: pip install pytest pytest-docker requests
+      - name: Run Pytest
+        working-directory: ./tests/
+        run: pytest -vv
