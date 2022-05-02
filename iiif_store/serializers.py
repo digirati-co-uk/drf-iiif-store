@@ -1,7 +1,7 @@
 import logging
 import copy
 import bleach
-import json 
+import json
 from bs4 import BeautifulSoup
 import dateutil.parser
 from rest_framework import serializers
@@ -12,7 +12,9 @@ from django.utils.translation import get_language
 from search_service.serializers.indexing import (
     BaseModelToIndexableSerializer,
 )
-
+from search_service.serializers.query_param import (
+    FacetedSearchQueryParamDataSerializer,
+)
 from search_service.models import ResourceRelationship
 
 from .models import (
@@ -99,7 +101,7 @@ class SourceIIIFToIIIFResourcesSerializer(serializers.Serializer):
     """
 
     def get_distinct_iiif_elements_and_relationships(self, iiif_element, parent_ids=[]):
-        if iiif_element.get("type") in iiif_store_settings.IIIF_RESOURCE_TYPES: 
+        if iiif_element.get("type") in iiif_store_settings.IIIF_RESOURCE_TYPES:
             resource_id = iiif_element.get("id")
             relationships = [
                 {
@@ -123,15 +125,16 @@ class SourceIIIFToIIIFResourcesSerializer(serializers.Serializer):
                 relationships.extend(rels)
         return resources, relationships
 
-    def update_parent_resources_with_child_resource_ids(self, relationships): 
-        """
-            """
-        parent_data = {rel.target_id: json.dumps(rel.target.iiif_json) for rel in relationships} 
-        for rel in relationships: 
+    def update_parent_resources_with_child_resource_ids(self, relationships):
+        """ """
+        parent_data = {
+            rel.target_id: json.dumps(rel.target.iiif_json) for rel in relationships
+        }
+        for rel in relationships:
             parent_data[rel.target_id] = parent_data[rel.target_id].replace(
-                    rel.source.original_id, rel.source.iiif_json.get("id")
-                    )
-        for parent_id, parent_iiif_json_str in parent_data.items(): 
+                rel.source.original_id, rel.source.iiif_json.get("id")
+            )
+        for parent_id, parent_iiif_json_str in parent_data.items():
             parent_resource = IIIFResource.objects.get(id=parent_id)
             parent_resource.iiif_json = json.loads(parent_iiif_json_str)
             parent_resource.save()
@@ -165,33 +168,27 @@ class SourceIIIFToIIIFResourcesSerializer(serializers.Serializer):
         return resource_instances + relationship_instances
 
 
-class IIIFSummarySerializer(serializers.HyperlinkedModelSerializer):
+class IIIFResourceAPIDetailSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = IIIFResource
         fields = [
             "url",
+            "id",
             "iiif_type",
+            "original_id",
             "label",
             "thumbnail",
+            "iiif_json",
         ]
         extra_kwargs = {
             "url": {
-                "view_name": "iiif_store:iiifresource-detail",
+                "view_name": "api:iiif_store:iiifresource-detail",
                 "lookup_field": "id",
             }
         }
 
 
-class IIIFSerializer(serializers.ModelSerializer):
-    def to_representation(self, instance):
-        return instance.iiif_json
-
-    class Meta:
-        model = IIIFResource
-        fields = ["iiif_json"]
-
-
-class IIIFResourceSummarySerializer(serializers.HyperlinkedModelSerializer):
+class IIIFResourceAPIListSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = IIIFResource
         fields = [
@@ -212,24 +209,38 @@ class IIIFResourceSummarySerializer(serializers.HyperlinkedModelSerializer):
         }
 
 
-class IIIFResourceSerializer(serializers.HyperlinkedModelSerializer):
+class IIIFResourceAPISearchSerializer(IIIFResourceAPIListSerializer):
+    pass
+
+
+class IIIFResourcePublicDetailSerializer(serializers.ModelSerializer):
+    def to_representation(self, instance):
+        return instance.iiif_json
+
+    class Meta:
+        model = IIIFResource
+        fields = ["iiif_json"]
+
+
+class IIIFResourcePublicListSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = IIIFResource
         fields = [
             "url",
-            "id",
             "iiif_type",
-            "original_id",
             "label",
             "thumbnail",
-            "iiif_json",
         ]
         extra_kwargs = {
             "url": {
-                "view_name": "api:iiif_store:iiifresource-detail",
+                "view_name": "iiif_store:iiifresource-detail",
                 "lookup_field": "id",
             }
         }
+
+
+class IIIFResourcePublicSearchSerializer(IIIFResourcePublicListSerializer):
+    pass
 
 
 class IIIFResourceToIndexableSerializer(BaseModelToIndexableSerializer):

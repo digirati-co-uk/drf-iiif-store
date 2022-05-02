@@ -1,7 +1,7 @@
 from search_service.parsers import (
-    SearchParser,
+    IndexableSearchParser,
 )
 
 
-class IIIFResourceSearchParser(SearchParser):
-    q_prefix = "indexables__"
+class IIIFResourceSearchParser(IndexableSearchParser):
+    pass
