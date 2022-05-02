@@ -6,7 +6,7 @@ from ..views import (
 
 app_name = "iiif_store"
 
-router = routers.DefaultRouter(trailing_slash=False)
+router = routers.DefaultRouter()
 router.register("iiif", IIIFResourceViewSet)
 router.register("search", IIIFResourceSearchViewSet, basename="search")
 urlpatterns = router.urls

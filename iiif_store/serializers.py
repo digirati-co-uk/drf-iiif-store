@@ -9,7 +9,7 @@ from rest_framework.validators import UniqueValidator
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import get_language
 
-from search_service.serializers import (
+from search_service.serializers.indexing import (
     BaseModelToIndexableSerializer,
 )
 

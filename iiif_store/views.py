@@ -14,7 +14,7 @@ from search_service.filters import (
 )
 
 from search_service.views import (
-    GenericSearchBaseViewSet,
+    BasePublicSearchViewSet,
 )
 
 # Local imports
@@ -82,14 +82,16 @@ class IIIFResourcePublicViewSet(
         return self.retrieve(request, *args, **kwargs)
 
 
-class IIIFResourceSearchViewSet(GenericSearchBaseViewSet):
+class IIIFResourceSearchViewSet(BasePublicSearchViewSet):
     queryset = IIIFResource.objects.all().distinct()
     parser_classes = [IIIFResourceSearchParser]
-    filter_backends = [ResourceFilter, FacetFilter, RankSnippetFilter]
+    filter_backends = [
+        ResourceFilter,
+        FacetFilter,
+        RankSnippetFilter,
+    ]
     serializer_class = IIIFResourceSummarySerializer
 
 
-class IIIFResourcePublicSearchViewSet(GenericSearchBaseViewSet):
-    queryset = IIIFResource.objects.all().distinct()
-    parser_classes = [IIIFResourceSearchParser]
+class IIIFResourcePublicSearchViewSet(IIIFResourceSearchViewSet):
     serializer_class = IIIFSummarySerializer
