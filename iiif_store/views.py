@@ -14,6 +14,7 @@ from search_service.filters import (
 )
 
 from search_service.views import (
+    BaseSearchViewSet,
     BasePublicSearchViewSet,
 )
 
@@ -32,6 +33,7 @@ from .serializers import (
     IIIFResourcePublicDetailSerializer,
     IIIFResourcePublicListSerializer,
     IIIFResourcePublicSearchSerializer,
+    IIIFResourceSearchQueryParamDataSerializer,
 )
 
 # This should be replaced by an import from a utils package.
@@ -85,7 +87,7 @@ class IIIFResourcePublicViewSet(
         return self.retrieve(request, *args, **kwargs)
 
 
-class IIIFResourceAPISearchViewSet(BasePublicSearchViewSet):
+class IIIFResourceAPISearchViewSet(BaseSearchViewSet):
     queryset = IIIFResource.objects.all().distinct()
     parser_classes = [IIIFResourceSearchParser]
     filter_backends = [
@@ -98,6 +100,7 @@ class IIIFResourceAPISearchViewSet(BasePublicSearchViewSet):
 
 class IIIFResourcePublicSearchViewSet(BasePublicSearchViewSet):
     queryset = IIIFResource.objects.all().distinct()
+    query_param_serializer_class = IIIFResourceSearchQueryParamDataSerializer
     parser_classes = [IIIFResourceSearchParser]
     filter_backends = [
         ResourceFilter,

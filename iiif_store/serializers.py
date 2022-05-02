@@ -243,6 +243,10 @@ class IIIFResourcePublicSearchSerializer(IIIFResourcePublicListSerializer):
     pass
 
 
+class IIIFResourceSearchQueryParamDataSerializer(FacetedSearchQueryParamDataSerializer):
+    facet_on = serializers.ListField(child=serializers.CharField(), required=False)
+
+
 class IIIFResourceToIndexableSerializer(BaseModelToIndexableSerializer):
 
     indexable_iiif_fields = [
