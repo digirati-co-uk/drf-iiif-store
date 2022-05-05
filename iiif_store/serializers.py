@@ -15,11 +15,13 @@ from search_service.serializers.indexing import (
 from search_service.serializers.query_param import (
     FacetedSearchQueryParamDataSerializer,
 )
+from search_service.serializers.search import BaseRankSnippetSearchSerializer
 from search_service.models import ResourceRelationship
 
 from .models import (
     IIIFResource,
 )
+from .utils import HyperlinkedMultiArgRelatedField
 from .settings import iiif_store_settings
 
 default_lang = get_language()
@@ -209,8 +211,27 @@ class IIIFResourceAPIListSerializer(serializers.HyperlinkedModelSerializer):
         }
 
 
-class IIIFResourceAPISearchSerializer(IIIFResourceAPIListSerializer):
-    pass
+class IIIFResourceAPISearchSerializer(BaseRankSnippetSearchSerializer):
+    class Meta:
+        model = IIIFResource
+        fields = [
+            "url",
+            "id",
+            "iiif_type",
+            "created",
+            "modified",
+            "original_id",
+            "label",
+            "thumbnail",
+            "rank",
+            "snippet",
+        ]
+        extra_kwargs = {
+            "url": {
+                "view_name": "api:iiif_store:iiifresource-detail",
+                "lookup_field": "id",
+            }
+        }
 
 
 class IIIFResourcePublicDetailSerializer(serializers.ModelSerializer):
@@ -223,6 +244,12 @@ class IIIFResourcePublicDetailSerializer(serializers.ModelSerializer):
 
 
 class IIIFResourcePublicListSerializer(serializers.HyperlinkedModelSerializer):
+    url = HyperlinkedMultiArgRelatedField(
+        source="*",
+        view_name="iiif_store:iiifresource-iiif_detail",
+        url_kwarg_field_mapping={"iiif_type": "iiif_type", "id": "id"},
+    )
+
     class Meta:
         model = IIIFResource
         fields = [
@@ -231,16 +258,25 @@ class IIIFResourcePublicListSerializer(serializers.HyperlinkedModelSerializer):
             "label",
             "thumbnail",
         ]
-        extra_kwargs = {
-            "url": {
-                "view_name": "iiif_store:iiifresource-detail",
-                "lookup_field": "id",
-            }
-        }
 
 
-class IIIFResourcePublicSearchSerializer(IIIFResourcePublicListSerializer):
-    pass
+class IIIFResourcePublicSearchSerializer(BaseRankSnippetSearchSerializer):
+    url = HyperlinkedMultiArgRelatedField(
+        source="*",
+        view_name="iiif_store:iiifresource-iiif_detail",
+        url_kwarg_field_mapping={"iiif_type": "iiif_type", "id": "id"},
+    )
+
+    class Meta:
+        model = IIIFResource
+        fields = [
+            "url",
+            "iiif_type",
+            "label",
+            "thumbnail",
+            "rank",
+            "snippet",
+        ]
 
 
 class IIIFResourceSearchQueryParamDataSerializer(FacetedSearchQueryParamDataSerializer):

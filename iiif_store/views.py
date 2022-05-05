@@ -14,7 +14,7 @@ from search_service.filters import (
 )
 
 from search_service.views import (
-    BaseSearchViewSet,
+    BaseAPISearchViewSet,
     BasePublicSearchViewSet,
 )
 
@@ -87,7 +87,7 @@ class IIIFResourcePublicViewSet(
         return self.retrieve(request, *args, **kwargs)
 
 
-class IIIFResourceAPISearchViewSet(BaseSearchViewSet):
+class IIIFResourceAPISearchViewSet(BaseAPISearchViewSet):
     queryset = IIIFResource.objects.all().distinct()
     parser_classes = [IIIFResourceSearchParser]
     filter_backends = [

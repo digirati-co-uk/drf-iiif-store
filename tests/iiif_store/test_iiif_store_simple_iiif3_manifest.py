@@ -27,7 +27,7 @@ def test_iiif_store_api_iiif_list_empty(http_service):
     test_endpoint = "iiif"
     status = 200
     response = requests.get(
-        f"{http_service}/{app_endpoint}/{test_endpoint}", headers=test_headers
+        f"{http_service}/{app_endpoint}/{test_endpoint}/", headers=test_headers
     )
     assert response.status_code == status
     response_json = response.json()
@@ -44,7 +44,7 @@ def test_iiif_store_api_iiif_create_manifest(http_service, simple_iiif3_manifest
     test_endpoint = "iiif"
     status = 201
     response = requests.post(
-        f"{http_service}/{app_endpoint}/{test_endpoint}",
+        f"{http_service}/{app_endpoint}/{test_endpoint}/",
         headers=test_headers,
         json=post_json,
     )
@@ -55,10 +55,11 @@ def test_iiif_store_api_iiif_create_manifest(http_service, simple_iiif3_manifest
     assert len(response_json.get("resources")) == 2
     assert len(response_json.get("relationships")) == 1
 
+    manifest_response_json = None
     for resource in response_json.get("resources"):
         test_data_store[resource.get("iiif_type")] = resource.get("id")
-
-    manifest_response_json = response_json.get("resources")[0]
+        if resource.get("iiif_type") == "manifest":
+            manifest_response_json = resource
     assert manifest_response_json.get("id") is not None
     assert manifest_response_json.get("iiif_type") == 'manifest'
     assert manifest_response_json.get("original_id") == simple_iiif3_manifest.get("id")
@@ -81,7 +82,7 @@ def test_iiif_store_api_iiif_list(http_service, simple_iiif3_manifest):
     test_endpoint = "iiif"
     status = 200
     response = requests.get(
-        f"{http_service}/{app_endpoint}/{test_endpoint}", headers=test_headers
+        f"{http_service}/{app_endpoint}/{test_endpoint}/", headers=test_headers
     )
     assert response.status_code == status
     response_json = response.json()
@@ -90,7 +91,12 @@ def test_iiif_store_api_iiif_list(http_service, simple_iiif3_manifest):
     assert response_json.get("previous") == None
     assert len(response_json.get("results")) == 2
 
-    manifest = response_json["results"][0]
+    manifest = None
+    for result in response_json["results"]:
+        if result.get("iiif_type") == "manifest": 
+            manifest = result
+    assert manifest != None 
+
     assert manifest.get("id") == test_data_store.get("manifest")
     assert manifest.get("iiif_type") == "manifest"
     assert manifest.get("original_id") == simple_iiif3_manifest.get("id")
@@ -103,7 +109,7 @@ def test_iiif_store_api_iiif_get_manifest(http_service, simple_iiif3_manifest):
     test_endpoint = f"iiif/{test_data_store.get('manifest')}"
     status = 200
     response = requests.get(
-        f"{http_service}/{app_endpoint}/{test_endpoint}", headers=test_headers
+        f"{http_service}/{app_endpoint}/{test_endpoint}/", headers=test_headers
     )
     assert response.status_code == status
     response_json = response.json()
@@ -119,14 +125,15 @@ def test_iiif_store_api_iiif_get_manifest(http_service, simple_iiif3_manifest):
         manifest_id
         == f"http://localhost:8000/iiif/manifest/{test_data_store.get('manifest')}/"
     )
-    assert response_json.get("iiif_json") == expected_manifest
+    #All IDs in a manifest now change on creation  
+    #assert response_json == expected_manifest
 
 
 def test_iiif_store_api_iiif_get_canvas(http_service):
     test_endpoint = f"iiif/{test_data_store.get('canvas')}"
     status = 200
     response = requests.get(
-        f"{http_service}/{app_endpoint}/{test_endpoint}", headers=test_headers
+        f"{http_service}/{app_endpoint}/{test_endpoint}/", headers=test_headers
     )
     assert response.status_code == status
     response_json = response.json()
@@ -144,7 +151,7 @@ def test_iiif_store_api_iiif_get_annotation(http_service):
     test_endpoint = f"iiif/{test_data_store.get('annotation')}"
     status = 200
     response = requests.get(
-        f"{http_service}/{app_endpoint}/{test_endpoint}", headers=test_headers
+        f"{http_service}/{app_endpoint}/{test_endpoint}/", headers=test_headers
     )
     assert response.status_code == status
     response_json = response.json()
@@ -162,7 +169,7 @@ def test_iiif_store_api_iiif_get_annotationpage(http_service):
     test_endpoint = f"iiif/{test_data_store.get('annotationpage')}"
     status = 200
     response = requests.get(
-        f"{http_service}/{app_endpoint}/{test_endpoint}", headers=test_headers
+        f"{http_service}/{app_endpoint}/{test_endpoint}/", headers=test_headers
     )
     assert response.status_code == status
     response_json = response.json()
@@ -178,7 +185,7 @@ def test_iiif_store_api_iiif_get_annotationpage(http_service):
 def test_iiif_store_public_iiif_list(http_service, simple_iiif3_manifest):
     test_endpoint = "iiif"
     status = 200
-    response = requests.get(f"{http_service}/{test_endpoint}", headers=test_headers)
+    response = requests.get(f"{http_service}/{test_endpoint}/", headers=test_headers)
     assert response.status_code == status
     response_json = response.json()
     assert response_json.get("count") == 2
@@ -186,9 +193,14 @@ def test_iiif_store_public_iiif_list(http_service, simple_iiif3_manifest):
     assert response_json.get("previous") == None
     assert len(response_json.get("results")) == 2
 
-    manifest = response_json["results"][0]
+    manifest = None
+    for result in response_json["results"]:
+        if result.get("iiif_type") == "manifest": 
+            manifest = result
+    assert manifest != None 
     assert manifest.get("iiif_type") == "manifest"
-    # assert manifest.get("url") == f"http://localhost:8000/iiif/manifest/{test_data_store.get('manifest')}/"
+    # The following url is generated in the serializer, so the host if from the app settings rather than the CANONICAL_HOSTNAME
+    assert manifest.get("url") == f"http://127.0.0.1:8000/iiif/manifest/{test_data_store.get('manifest')}/" 
     assert manifest.get("label") == simple_iiif3_manifest.get("label")
     assert manifest.get("thumbnail") == simple_iiif3_manifest.get("thumbnail")
     assert manifest.get("id") == None
@@ -199,7 +211,7 @@ def test_iiif_store_public_iiif_list(http_service, simple_iiif3_manifest):
 def test_iiif_store_public_iiif_get_manifest(http_service, simple_iiif3_manifest):
     test_endpoint = f"iiif/manifest/{test_data_store.get('manifest')}"
     status = 200
-    response = requests.get(f"{http_service}/{test_endpoint}", headers=test_headers)
+    response = requests.get(f"{http_service}/{test_endpoint}/", headers=test_headers)
     assert response.status_code == status
     response_json = response.json()
     expected_manifest = copy.deepcopy(simple_iiif3_manifest)
@@ -209,18 +221,19 @@ def test_iiif_store_public_iiif_get_manifest(http_service, simple_iiif3_manifest
         manifest_id
         == f"http://localhost:8000/iiif/manifest/{test_data_store.get('manifest')}/"
     )
-    assert response_json == expected_manifest
+    #All IDs in a manifest now change on creation  
+    #assert response_json == expected_manifest
 
 
 def test_iiif_store_public_iiif_get_canvas(http_service):
     test_endpoint = f"iiif/canvas/{test_data_store.get('canvas')}"
     status = 200
-    response = requests.get(f"{http_service}/{test_endpoint}", headers=test_headers)
+    response = requests.get(f"{http_service}/{test_endpoint}/", headers=test_headers)
     assert response.status_code == status
     response_json = response.json()
-    manifest_id = response_json.pop("id")
+    canvas_id = response_json.pop("id")
     assert (
-        manifest_id
+        canvas_id
         == f"http://localhost:8000/iiif/canvas/{test_data_store.get('canvas')}/"
     )
 
@@ -229,7 +242,7 @@ def test_iiif_store_public_iiif_get_canvas(http_service):
 def test_iiif_store_public_iiif_get_annotation(http_service):
     test_endpoint = f"iiif/annotation/{test_data_store.get('annotation')}"
     status = 200
-    response = requests.get(f"{http_service}/{test_endpoint}", headers=test_headers)
+    response = requests.get(f"{http_service}/{test_endpoint}/", headers=test_headers)
     assert response.status_code == status
     response_json = response.json()
     manifest_id = response_json.pop("id")
@@ -243,7 +256,7 @@ def test_iiif_store_public_iiif_get_annotation(http_service):
 def test_iiif_store_public_iiif_get_annotationpage(http_service):
     test_endpoint = f"iiif/annotationpage/{test_data_store.get('annotationpage')}"
     status = 200
-    response = requests.get(f"{http_service}/{test_endpoint}", headers=test_headers)
+    response = requests.get(f"{http_service}/{test_endpoint}/", headers=test_headers)
     assert response.status_code == status
     response_json = response.json()
     manifest_id = response_json.pop("id")
@@ -258,7 +271,7 @@ def test_search_service_api_iiif_indexables(http_service):
     test_endpoint = "indexable"
     status = 200
     response = requests.get(
-        f"{http_service}/{app_endpoint}/{test_endpoint}", headers=test_headers
+        f"{http_service}/{app_endpoint}/{test_endpoint}/", headers=test_headers
     )
     assert response.status_code == status
     response_json = response.json()
@@ -291,31 +304,31 @@ def test_iiif_store_api_iiif_delete(http_service):
     test_endpoint = f"iiif/{test_data_store.get('manifest')}"
     status = 204
     response = requests.delete(
-        f"{http_service}/{app_endpoint}/{test_endpoint}", headers=test_headers
+        f"{http_service}/{app_endpoint}/{test_endpoint}/", headers=test_headers
     )
     assert response.status_code == status
 
     status = 404
     response = requests.get(
-        f"{http_service}/{app_endpoint}/{test_endpoint}", headers=test_headers
+        f"{http_service}/{app_endpoint}/{test_endpoint}/", headers=test_headers
     )
     assert response.status_code == status
 
     test_endpoint = f"iiif/{test_data_store.get('canvas')}"
     response = requests.get(
-        f"{http_service}/{app_endpoint}/{test_endpoint}", headers=test_headers
+        f"{http_service}/{app_endpoint}/{test_endpoint}/", headers=test_headers
     )
     assert response.status_code == status
 
     test_endpoint = f"iiif/{test_data_store.get('annotation')}"
     response = requests.get(
-        f"{http_service}/{app_endpoint}/{test_endpoint}", headers=test_headers
+        f"{http_service}/{app_endpoint}/{test_endpoint}/", headers=test_headers
     )
     assert response.status_code == status
 
     test_endpoint = f"iiif/{test_data_store.get('annotationpage')}"
     response = requests.get(
-        f"{http_service}/{app_endpoint}/{test_endpoint}", headers=test_headers
+        f"{http_service}/{app_endpoint}/{test_endpoint}/", headers=test_headers
     )
     assert response.status_code == status
 
@@ -324,7 +337,7 @@ def test_search_service_api_iiif_indexable_deleted(http_service):
     test_endpoint = "indexable"
     status = 200
     response = requests.get(
-        f"{http_service}/{app_endpoint}/{test_endpoint}", headers=test_headers
+        f"{http_service}/{app_endpoint}/{test_endpoint}/", headers=test_headers
     )
     assert response.status_code == status
     response_json = response.json()

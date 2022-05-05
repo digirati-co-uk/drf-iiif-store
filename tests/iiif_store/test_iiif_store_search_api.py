@@ -28,7 +28,7 @@ def test_iiif_store_api_search_empty(http_service):
     test_endpoint = "search"
     status = 200
     response = requests.get(
-        f"{http_service}/{app_endpoint}/{test_endpoint}", headers=test_headers
+        f"{http_service}/{app_endpoint}/{test_endpoint}/", headers=test_headers
     )
     assert response.status_code == status
     response_json = response.json()
@@ -48,7 +48,7 @@ def test_iiif_store_api_iiif_create_manifests_for_search(
             "iiif_json": manifest_json,
         }
         response = requests.post(
-            f"{http_service}/{app_endpoint}/{test_endpoint}",
+            f"{http_service}/{app_endpoint}/{test_endpoint}/",
             headers=test_headers,
             json=post_json,
         )
@@ -56,26 +56,29 @@ def test_iiif_store_api_iiif_create_manifests_for_search(
         response_json = response.json()
         assert response_json.get("resources") is not None
         assert response_json.get("relationships") is not None
-        test_data_store["manifest_uuids"].append(response_json.get("resources")[0].get("id"))
+        test_data_store["manifest_uuids"].append(
+            response_json.get("resources")[0].get("id")
+        )
 
 
 def test_iiif_store_api_search_populated(http_service):
     test_endpoint = "search"
     status = 200
     response = requests.get(
-        f"{http_service}/{app_endpoint}/{test_endpoint}", headers=test_headers
+        f"{http_service}/{app_endpoint}/{test_endpoint}/", headers=test_headers
     )
     assert response.status_code == status
     response_json = response.json()
-    assert response_json.get("count") == 22
-    assert len(response_json.get("results")) == 22
+    assert response_json.get("count") == 10  # 1 manifest, 9 canvases
+    assert len(response_json.get("results")) == 10
+
 
 def test_iiif_store_api_search_simple_query(http_service):
     test_endpoint = "search"
     status = 200
     post_json = {"fulltext": "heron"}
     response = requests.post(
-        f"{http_service}/{app_endpoint}/{test_endpoint}",
+        f"{http_service}/{app_endpoint}/{test_endpoint}/",
         json=post_json,
         headers=test_headers,
     )
@@ -89,7 +92,7 @@ def test_iiif_store_api_search_simple_query_no_match(http_service):
     status = 200
     post_json = {"fulltext": "philo"}
     response = requests.post(
-        f"{http_service}/{app_endpoint}/{test_endpoint}",
+        f"{http_service}/{app_endpoint}/{test_endpoint}/",
         json=post_json,
         headers=test_headers,
     )
@@ -103,12 +106,12 @@ def test_iiif_store_api_search_simple_query_rank(http_service):
     status = 200
     post_json = {"fulltext": "heron"}
     response = requests.post(
-        f"{http_service}/{app_endpoint}/{test_endpoint}",
+        f"{http_service}/{app_endpoint}/{test_endpoint}/",
         json=post_json,
         headers=test_headers,
     )
     response_json = response.json()
-    print(response_json)
+    assert response.status_code == status
     assert (
         int(response_json["results"][0].get("rank", 0)) > 0
     )  # There is a non-zero rank
@@ -119,12 +122,13 @@ def test_iiif_store_api_search_simple_query_snippet(http_service):
     status = 200
     post_json = {"fulltext": "heron"}
     response = requests.post(
-        f"{http_service}/{app_endpoint}/{test_endpoint}",
+        f"{http_service}/{app_endpoint}/{test_endpoint}/",
         json=post_json,
         headers=test_headers,
     )
     response_json = response.json()
-    assert "<b>Resource</b>" in response_json["results"][0].get("snippet", None)
+    assert response.status_code == status
+    assert "<b>Heron</b>" in response_json["results"][0].get("snippet", None)
 
 
 def test_iiif_store_api_search_facet_query(http_service):
@@ -134,7 +138,7 @@ def test_iiif_store_api_search_facet_query(http_service):
         "facets": [{"type": "metadata", "subtype": "author", "value": "Ktesibios"}]
     }
     response = requests.post(
-        f"{http_service}/{app_endpoint}/{test_endpoint}",
+        f"{http_service}/{app_endpoint}/{test_endpoint}/",
         json=post_json,
         headers=test_headers,
     )
@@ -147,16 +151,18 @@ def test_iiif_store_api_search_another_facet_query(http_service):
     test_endpoint = "search"
     status = 200
     post_json = {
-        "facets": [{"type": "metadata", "subtype": "urheber", "value": "Heron von Alexandria"}]
+        "facets": [
+            {"type": "metadata", "subtype": "urheber", "value": "Heron von Alexandria"}
+        ]
     }
     response = requests.post(
-        f"{http_service}/{app_endpoint}/{test_endpoint}",
+        f"{http_service}/{app_endpoint}/{test_endpoint}/",
         json=post_json,
         headers=test_headers,
     )
     response_json = response.json()
     assert response.status_code == status
-    assert len(response_json.get("results")) == 2
+    assert len(response_json.get("results")) == 3
 
 
 def test_iiif_store_api_search_facet_query_wrong_key(http_service):
@@ -169,7 +175,7 @@ def test_iiif_store_api_search_facet_query_wrong_key(http_service):
         "facets": [{"type": "metadata", "subtype": "language", "value": "Pictish"}]
     }
     response = requests.post(
-        f"{http_service}/{app_endpoint}/{test_endpoint}",
+        f"{http_service}/{app_endpoint}/{test_endpoint}/",
         json=post_json,
         headers=test_headers,
     )
@@ -178,53 +184,27 @@ def test_iiif_store_api_search_facet_query_wrong_key(http_service):
     assert len(response_json.get("results")) == 0
 
 
-def test_iiif_store_api_search_simple_query_data_key(http_service):
-    test_endpoint = "search"
-    post_json = {"fulltext": "Héron d'Alexandrie"}
-    response = requests.post(
-        f"{http_service}/{app_endpoint}/{test_endpoint}",
-        json=post_json,
-        headers=test_headers,
-    )
-    response_json = response.json()
-    assert len(response_json.get("results")) == 1
-    assert "<b>Value</b>" in response_json["results"][0].get("snippet", None)
-
-
-def test_iiif_store_api_search_simple_query_data_key_broader(http_service):
-    test_endpoint = "search"
-    post_json = {"fulltext": "Value"}
-    response = requests.post(
-        f"{http_service}/{app_endpoint}/{test_endpoint}",
-        json=post_json,
-        headers=test_headers,
-    )
-    response_json = response.json()
-    assert len(response_json.get("results")) == 2  # No longer one per hit, but one per resource
-    assert "<b>Value</b>" in response_json["results"][0].get("snippet", None)
-
-
 def test_iiif_store_api_search_resource_query(http_service):
     test_endpoint = "search"
     status = 200
     post_json = {  # Partial match on label, should match against "Another"
         "resource_filters": [
             {
-                "value": "other",
+                "value": {"en": ["Pneumatica"]},
                 "field": "label",
-                "operator": "icontains",
-                "resource_class": "jsonresource",
+                "operator": "contains",
+                "resource_class": "iiifresource",
             }
         ],
     }
     response = requests.post(
-        f"{http_service}/{app_endpoint}/{test_endpoint}",
+        f"{http_service}/{app_endpoint}/{test_endpoint}/",
         json=post_json,
         headers=test_headers,
     )
     response_json = response.json()
     assert response.status_code == status
-    assert len(response_json.get("results")) == 1
+    assert len(response_json.get("results")) == 2
 
 
 def test_iiif_store_api_search_resource_query_no_match(http_service):
@@ -241,7 +221,7 @@ def test_iiif_store_api_search_resource_query_no_match(http_service):
         ],
     }
     response = requests.post(
-        f"{http_service}/{app_endpoint}/{test_endpoint}",
+        f"{http_service}/{app_endpoint}/{test_endpoint}/",
         json=post_json,
         headers=test_headers,
     )
@@ -267,12 +247,11 @@ def test_iiif_store_api_search_resource_query_no_resourceclass(http_service):
         ],
     }
     response = requests.post(
-        f"{http_service}/{app_endpoint}/{test_endpoint}",
+        f"{http_service}/{app_endpoint}/{test_endpoint}/",
         json=post_json,
         headers=test_headers,
     )
     assert response.status_code == status
-
 
 
 def test_iiif_store_api_iiif_delete_manifests_for_search(
@@ -283,6 +262,6 @@ def test_iiif_store_api_iiif_delete_manifests_for_search(
         test_endpoint = f"iiif/{manifest_id}"
         status = 204
         response = requests.delete(
-            f"{http_service}/{app_endpoint}/{test_endpoint}", headers=test_headers
+            f"{http_service}/{app_endpoint}/{test_endpoint}/", headers=test_headers
         )
         assert response.status_code == status
