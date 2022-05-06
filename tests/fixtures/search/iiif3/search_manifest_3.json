@@ -1,25 +1,25 @@
 {
     "@context": "http://iiif.io/api/presentation/3/context.json",
-    "id": "https://demo-forager.ch.digtest.co.uk/preservica/manifest/68fb134a-4981-4a1a-81e9-0a65c7279e3c",
+    "id": "https://demo-forager.ch.digtest.co.uk/preservica/manifest/c7803a95-1f58-4322-b86b-a79d2ad18552",
     "type": "Manifest",
     "items": [
         {
-            "id": "https://demo-forager.ch.digtest.co.uk/preservica/canvas/6d1593a7-bc34-4c72-a561-588fca0c8ccf",
+            "id": "https://demo-forager.ch.digtest.co.uk/preservica/canvas/f3f3924f-56e3-49d3-abdf-bc08c0d995b2",
             "type": "Canvas",
             "items": [
                 {
-                    "id": "https://demo-forager.ch.digtest.co.uk/preservica/page/6ab18310-4622-4020-bdce-16f7bf841d28",
+                    "id": "https://demo-forager.ch.digtest.co.uk/preservica/page/72949667-2e52-45e0-a9d5-8c21dd442bb3",
                     "type": "AnnotationPage",
                     "items": [
                         {
-                            "id": "https://demo-forager.ch.digtest.co.uk/preservica/annotation/6aa18210-4622-4020-bdce-16f7bf841d28",
+                            "id": "https://demo-forager.ch.digtest.co.uk/preservica/annotation/21a9e40e-993f-4cff-9d32-edbee6889a0c",
                             "body": {
-                                "id": "https://dlc.services/iiif-img/13/1/2a6511c4-586b-44e4-aab8-d1da5bf267f7/full/!1024,1024/0/default.jpg",
+                                "id": "https://dlc.services/iiif-img/13/1/da483078-aacc-4f1d-b6e1-6ce85678915b/full/!1024,1024/0/default.jpg",
                                 "type": "Image",
                                 "format": "image/jpeg",
                                 "service": [
                                     {
-                                        "@id": "https://dlc.services/iiif-img/13/1/2a6511c4-586b-44e4-aab8-d1da5bf267f7",
+                                        "@id": "https://dlc.services/iiif-img/13/1/e0c904e3-0396-4148-9e7f-73605a506b2f",
                                         "@type": "ImageService2",
                                         "profile": "http://iiif.io/api/image/2/level2.json"
                                     }
@@ -28,7 +28,7 @@
                                 "width": 5004
                             },
                             "type": "Annotation",
-                            "target": "https://demo-forager.ch.digtest.co.uk/preservica/canvas/6d1593a7-bc34-4c72-a561-588fca0c8ccf",
+                            "target": "https://demo-forager.ch.digtest.co.uk/preservica/canvas/76012338-0176-4aae-81d7-84abc368e37d",
                             "motivation": "painting"
                         }
                     ]
@@ -36,29 +36,22 @@
             ],
             "label": {
                 "en": [
-                    "Canvas label"
-                ], 
-                "de": [
-                    "Canvas-Etikett"
-                ], 
-                "fr": [
-                    "Libellé du toile"
+                    "Lifting heavy objects"
                 ]
-
             },
             "width": 5004,
             "height": 6188,
             "metadata": [],
             "thumbnail": [
                 {
-                    "id": "https://dlc.services/thumbs/13/1/2a6511c4-586b-44e4-aab8-d1da5bf267f7/full/!828,1024/0/default.jpg",
+                    "id": "https://dlc.services/thumbs/13/1/edc2668f-15df-4695-9143-058564bec9b7/full/!828,1024/0/default.jpg",
                     "type": "Image",
                     "format": "image/jpeg",
                     "width": 828,
                     "height": 1024,
                     "service": [
                         {
-                            "id": "https://dlc.services/thumbs/13/1/2a6511c4-586b-44e4-aab8-d1da5bf267f7",
+                            "id": "https://dlc.services/thumbs/13/1/58f756da-217c-471f-aca1-7cb3665a69b4",
                             "@type": "ImageService2",
                             "profile": "http://iiif.io/api/image/2/level2.json",
                             "sizes": [
@@ -87,14 +80,8 @@
     ],
     "label": {
         "en": [
-            "Manifest label"
-        ], 
-        "de": [
-            "Manifestetikett"
-        ], 
-        "fr": [
-            "Libellé du manifeste"
-        ]
+            "Mechanica"
+        ] 
     },
     "metadata": [
         {
@@ -104,34 +91,32 @@
                 ], 
                 "de": [
                     "urheber"
-                ], 
-                "fr": [
-                    "auteur"
                 ]
             },
             "value": {
                 "en": [
-                    "Manifest author"
+                    "Heron of Alexandria"
                 ], 
                 "de": [
-                    "Manifester urheber"
-                ], 
-                "fr": [
-                    "Auteur du manifeste"
+                    "Heron von Alexandria"
                 ]
             }
+        }, 
+        {
+            "label": { "en": ["notes"]}, 
+            "value": { "en": ["preserved only in Arabic"]}
         }
     ],
     "thumbnail": [
         {
-            "id": "https://dlc.services/thumbs/13/1/2a6511c4-586b-44e4-aab8-d1da5bf267f7/full/!828,1024/0/default.jpg",
+            "id": "https://dlc.services/thumbs/13/1/61c2f18b-2564-4e54-82a1-ffd5f76dc88f/full/!828,1024/0/default.jpg",
             "type": "Image",
             "format": "image/jpeg",
             "width": 828,
             "height": 1024,
             "service": [
                 {
-                    "id": "https://dlc.services/thumbs/13/1/2a6511c4-586b-44e4-aab8-d1da5bf267f7",
+                    "id": "https://dlc.services/thumbs/13/1/79f0efd9-f53b-4970-83bf-fd73c0742839",
                     "@type": "ImageService2",
                     "profile": "http://iiif.io/api/image/2/level2.json",
                     "sizes": [

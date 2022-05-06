@@ -6,7 +6,8 @@ logger = logging.getLogger(__name__)
 DEFAULT_SETTINGS = {
         "CANONICAL_HOSTNAME": "", 
         "INDEX_IIIF_RESOURCES": True, # If True, IIIFResources will be indexed into the search_service on save. 
-
+        "ASYNC_INDEXING": False, # If True, indexing will be carried out asynchronously in a django q task. 
+        "IIIF_RESOURCE_TYPES": ["Manifest", "Canvas"], # Defines which IIIF Resources will be generated from a manifest.
         }
 
 

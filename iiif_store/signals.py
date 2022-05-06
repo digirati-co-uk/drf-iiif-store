@@ -2,10 +2,13 @@ import logging
 
 from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
+from django_q.tasks import async_task
 
 from .models import IIIFResource
 from .tasks import IIIFResourceIndexingTask
 from .settings import iiif_store_settings
+from .utils import run_task
+
 
 logger = logging.getLogger(__name__)
 
@@ -13,9 +16,14 @@ logger = logging.getLogger(__name__)
 @receiver(post_save, sender=IIIFResource)
 def index_iiif_resource(sender, instance, **kwargs):
     if iiif_store_settings.INDEX_IIIF_RESOURCES:
-        logger.debug(f"Running the IIIFResourceIndexingTask for: ({instance.id})")
-        task = IIIFResourceIndexingTask(instance.id)
-        task.run()
+        task = IIIFResourceIndexingTask
+        if iiif_store_settings.ASYNC_INDEXING:
+            logger.debug(f"Queuing the IIIFResourceIndexingTask for: ({instance.id})")
+            async_task(run_task, task, object_id=instance.id)
+        else: 
+            logger.debug(f"Running the IIIFResourceIndexingTask for: ({instance.id})")
+            sync_task = task(object_id=instance.id)
+            sync_task.run()
 
 
 @receiver(pre_delete, sender=IIIFResource)

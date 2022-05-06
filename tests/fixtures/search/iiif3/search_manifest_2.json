@@ -1,0 +1,214 @@
+{
+    "@context": "http://iiif.io/api/presentation/3/context.json",
+    "id": "https://demo-forager.ch.digtest.co.uk/preservica/manifest/b2a6123f-b4ab-4196-a287-c8a843ffd513",
+    "type": "Manifest",
+    "items": [
+        {
+            "id": "https://demo-forager.ch.digtest.co.uk/preservica/canvas/f8d00cab-cdd4-4fcd-827f-a74e3f5b66a5",
+            "type": "Canvas",
+            "items": [
+                {
+                    "id": "https://demo-forager.ch.digtest.co.uk/preservica/page/17585aca-7096-4774-809e-c6900e1842e2",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://demo-forager.ch.digtest.co.uk/preservica/annotation/087ceafc-bf54-4885-a2b1-5eb2443040ac",
+                            "body": {
+                                "id": "https://dlc.services/iiif-img/13/1/f9489d4a-ae70-4228-bf62-84a90c1ff1b8/full/!1024,1024/0/default.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg",
+                                "service": [
+                                    {
+                                        "@id": "https://dlc.services/iiif-img/13/1/76ebdf0b-9fc9-4228-9bf3-56bba9f50bd5",
+                                        "@type": "ImageService2",
+                                        "profile": "http://iiif.io/api/image/2/level2.json"
+                                    }
+                                ],
+                                "height": 6188,
+                                "width": 5004
+                            },
+                            "type": "Annotation",
+                            "target": "https://demo-forager.ch.digtest.co.uk/preservica/canvas/89919a71-bf39-4812-a31f-85cb2cb27c00",
+                            "motivation": "painting"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "en": [
+                    "On Automata"
+                ]
+            },
+            "width": 5004,
+            "height": 6188,
+            "metadata": [],
+            "thumbnail": [
+                {
+                    "id": "https://dlc.services/thumbs/13/1/a57f1f9e-84e9-4ac9-ad91-c4e3e36f2119/full/!828,1024/0/default.jpg",
+                    "type": "Image",
+                    "format": "image/jpeg",
+                    "width": 828,
+                    "height": 1024,
+                    "service": [
+                        {
+                            "id": "https://dlc.services/thumbs/13/1/eabfc19b-9d37-4519-a841-335c36830628",
+                            "@type": "ImageService2",
+                            "profile": "http://iiif.io/api/image/2/level2.json",
+                            "sizes": [
+                                {
+                                    "width": 828,
+                                    "height": 1024
+                                },
+                                {
+                                    "width": 323,
+                                    "height": 400
+                                },
+                                {
+                                    "width": 162,
+                                    "height": 200
+                                },
+                                {
+                                    "width": 81,
+                                    "height": 100
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }, 
+        {
+            "id": "https://demo-forager.ch.digtest.co.uk/preservica/canvas/bd271621-5159-468a-aa09-7b18477e9d52",
+            "type": "Canvas",
+            "items": [
+                {
+                    "id": "https://demo-forager.ch.digtest.co.uk/preservica/page/d4251186-ecf3-422e-995e-928b0e6629b6",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://demo-forager.ch.digtest.co.uk/preservica/annotation/d05fdec0-72ad-4cbd-9d16-53f55ab14aa6",
+                            "body": {
+                                "id": "https://dlc.services/iiif-img/13/1/37f30e2e-425b-4053-a890-8c778371d833/full/!1024,1024/0/default.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg",
+                                "service": [
+                                    {
+                                        "@id": "https://dlc.services/iiif-img/13/1/0e784468-2739-417c-9cb1-f8f1378357d9",
+                                        "@type": "ImageService2",
+                                        "profile": "http://iiif.io/api/image/2/level2.json"
+                                    }
+                                ],
+                                "height": 6188,
+                                "width": 5004
+                            },
+                            "type": "Annotation",
+                            "target": "https://demo-forager.ch.digtest.co.uk/preservica/canvas/9ee97e1a-61d4-45f8-ac6a-77cc6a2e040d",
+                            "motivation": "painting"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "en": [
+                    "On Stationary Automata"
+                ]
+            },
+            "width": 5004,
+            "height": 6188,
+            "metadata": [],
+            "thumbnail": [
+                {
+                    "id": "https://dlc.services/thumbs/13/1/8fb32bbe-89f7-4329-ab9d-8dbac8ba4359/full/!828,1024/0/default.jpg",
+                    "type": "Image",
+                    "format": "image/jpeg",
+                    "width": 828,
+                    "height": 1024,
+                    "service": [
+                        {
+                            "id": "https://dlc.services/thumbs/13/1/b76f4936-4f2e-41f2-b71d-f8f8d377cca1",
+                            "@type": "ImageService2",
+                            "profile": "http://iiif.io/api/image/2/level2.json",
+                            "sizes": [
+                                {
+                                    "width": 828,
+                                    "height": 1024
+                                },
+                                {
+                                    "width": 323,
+                                    "height": 400
+                                },
+                                {
+                                    "width": 162,
+                                    "height": 200
+                                },
+                                {
+                                    "width": 81,
+                                    "height": 100
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "label": {
+        "en": [
+            "Automata"
+        ] 
+    },
+    "metadata": [
+        {
+            "label": {
+                "en": [
+                    "author"
+                ], 
+                "de": [
+                    "urheber"
+                ]
+            },
+            "value": {
+                "en": [
+                    "Heron of Alexandria"
+                ], 
+                "de": [
+                    "Heron von Alexandria"
+                ]
+            }
+        }
+    ],
+    "thumbnail": [
+        {
+            "id": "https://dlc.services/thumbs/13/1/87ed1421-08cc-4a43-9c37-565fef630ed0/full/!828,1024/0/default.jpg",
+            "type": "Image",
+            "format": "image/jpeg",
+            "width": 828,
+            "height": 1024,
+            "service": [
+                {
+                    "id": "https://dlc.services/thumbs/13/1/73f4624d-17a8-471a-aa1f-b13cbca2f95c",
+                    "@type": "ImageService2",
+                    "profile": "http://iiif.io/api/image/2/level2.json",
+                    "sizes": [
+                        {
+                            "width": 828,
+                            "height": 1024
+                        },
+                        {
+                            "width": 323,
+                            "height": 400
+                        },
+                        {
+                            "width": 162,
+                            "height": 200
+                        },
+                        {
+                            "width": 81,
+                            "height": 100
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

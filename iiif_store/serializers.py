@@ -1,6 +1,7 @@
 import logging
 import copy
 import bleach
+import json
 from bs4 import BeautifulSoup
 import dateutil.parser
 from rest_framework import serializers
@@ -8,15 +9,20 @@ from rest_framework.validators import UniqueValidator
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import get_language
 
-from search_service.serializers import (
+from search_service.serializers.indexing import (
     BaseModelToIndexableSerializer,
 )
-
+from search_service.serializers.query_param import (
+    FacetedSearchQueryParamDataSerializer,
+)
+from search_service.serializers.search import BaseRankSnippetSearchSerializer
 from search_service.models import ResourceRelationship
 
 from .models import (
     IIIFResource,
 )
+from .utils import HyperlinkedMultiArgRelatedField
+from .settings import iiif_store_settings
 
 default_lang = get_language()
 
@@ -97,16 +103,21 @@ class SourceIIIFToIIIFResourcesSerializer(serializers.Serializer):
     """
 
     def get_distinct_iiif_elements_and_relationships(self, iiif_element, parent_ids=[]):
-        resource_id = iiif_element.get("id")
-        relationships = [
-            {
-                "target": parent_id,
-                "source": resource_id,
-            }
-            for parent_id in parent_ids
-        ]
-        child_parent_ids = [resource_id] + parent_ids
-        resources = [{"iiif_json": copy.deepcopy(iiif_element)}]
+        if iiif_element.get("type") in iiif_store_settings.IIIF_RESOURCE_TYPES:
+            resource_id = iiif_element.get("id")
+            relationships = [
+                {
+                    "target": parent_id,
+                    "source": resource_id,
+                }
+                for parent_id in parent_ids
+            ]
+            child_parent_ids = [resource_id] + parent_ids
+            resources = [{"iiif_json": copy.deepcopy(iiif_element)}]
+        else:
+            relationships = []
+            resources = []
+            child_parent_ids = [] + parent_ids
         if items := iiif_element.get("items"):
             for i in items:
                 res, rels = self.get_distinct_iiif_elements_and_relationships(
@@ -115,6 +126,20 @@ class SourceIIIFToIIIFResourcesSerializer(serializers.Serializer):
                 resources.extend(res)
                 relationships.extend(rels)
         return resources, relationships
+
+    def update_parent_resources_with_child_resource_ids(self, relationships):
+        """ """
+        parent_data = {
+            rel.target_id: json.dumps(rel.target.iiif_json) for rel in relationships
+        }
+        for rel in relationships:
+            parent_data[rel.target_id] = parent_data[rel.target_id].replace(
+                rel.source.original_id, rel.source.iiif_json.get("id")
+            )
+        for parent_id, parent_iiif_json_str in parent_data.items():
+            parent_resource = IIIFResource.objects.get(id=parent_id)
+            parent_resource.iiif_json = json.loads(parent_iiif_json_str)
+            parent_resource.save()
 
     def to_internal_value(self, data):
         resources, relationships = self.get_distinct_iiif_elements_and_relationships(
@@ -137,6 +162,7 @@ class SourceIIIFToIIIFResourcesSerializer(serializers.Serializer):
         )
         relationship_serializer.is_valid(raise_exception=True)
         relationship_instances = relationship_serializer.save()
+        self.update_parent_resources_with_child_resource_ids(relationship_instances)
         self._data = {
             "resources": resource_serializer.data,
             "relationships": relationship_serializer.data,
@@ -144,33 +170,27 @@ class SourceIIIFToIIIFResourcesSerializer(serializers.Serializer):
         return resource_instances + relationship_instances
 
 
-class IIIFSummarySerializer(serializers.HyperlinkedModelSerializer):
+class IIIFResourceAPIDetailSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = IIIFResource
         fields = [
             "url",
+            "id",
             "iiif_type",
+            "original_id",
             "label",
             "thumbnail",
+            "iiif_json",
         ]
         extra_kwargs = {
             "url": {
-                "view_name": "iiif_store:iiifresource-detail",
+                "view_name": "api:iiif_store:iiifresource-detail",
                 "lookup_field": "id",
             }
         }
 
 
-class IIIFSerializer(serializers.ModelSerializer):
-    def to_representation(self, instance):
-        return instance.iiif_json
-
-    class Meta:
-        model = IIIFResource
-        fields = ["iiif_json"]
-
-
-class IIIFResourceSummarySerializer(serializers.HyperlinkedModelSerializer):
+class IIIFResourceAPIListSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = IIIFResource
         fields = [
@@ -191,17 +211,20 @@ class IIIFResourceSummarySerializer(serializers.HyperlinkedModelSerializer):
         }
 
 
-class IIIFResourceSerializer(serializers.HyperlinkedModelSerializer):
+class IIIFResourceAPISearchSerializer(BaseRankSnippetSearchSerializer):
     class Meta:
         model = IIIFResource
         fields = [
             "url",
             "id",
             "iiif_type",
+            "created",
+            "modified",
             "original_id",
             "label",
             "thumbnail",
-            "iiif_json",
+            "rank",
+            "snippet",
         ]
         extra_kwargs = {
             "url": {
@@ -209,6 +232,55 @@ class IIIFResourceSerializer(serializers.HyperlinkedModelSerializer):
                 "lookup_field": "id",
             }
         }
+
+
+class IIIFResourcePublicDetailSerializer(serializers.ModelSerializer):
+    def to_representation(self, instance):
+        return instance.iiif_json
+
+    class Meta:
+        model = IIIFResource
+        fields = ["iiif_json"]
+
+
+class IIIFResourcePublicListSerializer(serializers.HyperlinkedModelSerializer):
+    url = HyperlinkedMultiArgRelatedField(
+        source="*",
+        view_name="iiif_store:iiifresource-iiif_detail",
+        url_kwarg_field_mapping={"iiif_type": "iiif_type", "id": "id"},
+    )
+
+    class Meta:
+        model = IIIFResource
+        fields = [
+            "url",
+            "iiif_type",
+            "label",
+            "thumbnail",
+        ]
+
+
+class IIIFResourcePublicSearchSerializer(BaseRankSnippetSearchSerializer):
+    url = HyperlinkedMultiArgRelatedField(
+        source="*",
+        view_name="iiif_store:iiifresource-iiif_detail",
+        url_kwarg_field_mapping={"iiif_type": "iiif_type", "id": "id"},
+    )
+
+    class Meta:
+        model = IIIFResource
+        fields = [
+            "url",
+            "iiif_type",
+            "label",
+            "thumbnail",
+            "rank",
+            "snippet",
+        ]
+
+
+class IIIFResourceSearchQueryParamDataSerializer(FacetedSearchQueryParamDataSerializer):
+    facet_on = serializers.ListField(child=serializers.CharField(), required=False)
 
 
 class IIIFResourceToIndexableSerializer(BaseModelToIndexableSerializer):

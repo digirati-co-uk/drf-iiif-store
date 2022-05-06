@@ -1,7 +1,7 @@
 from search_service.parsers import (
-    SearchParser,
+    ResourceSearchParser,
 )
 
 
-class IIIFResourceSearchParser(SearchParser):
+class IIIFResourceSearchParser(ResourceSearchParser):
     pass
