@@ -9,8 +9,6 @@ services:
     build:
       context: .
       dockerfile: ./example_project/Dockerfile
-      args:
-        - GITHUB_TOKEN=${GITHUB_TOKEN}
     depends_on:
       - postgres
     links:
