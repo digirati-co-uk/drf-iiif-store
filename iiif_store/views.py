@@ -4,15 +4,36 @@ import logging
 from rest_framework import viewsets
 from rest_framework.decorators import action
 
+from rest_framework.response import Response
+
+
+from search_service.filters import (
+    ResourceFilter,
+    FacetFilter,
+    RankSnippetFilter,
+)
+
+from search_service.views import (
+    BaseAPISearchViewSet,
+    BasePublicSearchViewSet,
+)
+
 # Local imports
 from .models import (
     IIIFResource,
 )
+from .parsers import (
+    IIIFResourceSearchParser,
+)
 from .serializers import (
-    IIIFSerializer,
-    IIIFSummarySerializer,
-    IIIFResourceSerializer,
-    IIIFResourceSummarySerializer,
+    SourceIIIFToIIIFResourcesSerializer,
+    IIIFResourceAPIDetailSerializer,
+    IIIFResourceAPIListSerializer,
+    IIIFResourceAPISearchSerializer,
+    IIIFResourcePublicDetailSerializer,
+    IIIFResourcePublicListSerializer,
+    IIIFResourcePublicSearchSerializer,
+    IIIFResourceSearchQueryParamDataSerializer,
 )
 
 # This should be replaced by an import from a utils package.
@@ -23,11 +44,12 @@ from .utils import (
 logger = logging.getLogger(__name__)
 
 
-class IIIFResourceViewSet(ActionBasedSerializerMixin, viewsets.ModelViewSet):
+class IIIFResourceAPIViewSet(ActionBasedSerializerMixin, viewsets.ModelViewSet):
     queryset = IIIFResource.objects.all()
     serializer_mapping = {
-        "default": IIIFResourceSerializer,
-        "list": IIIFResourceSummarySerializer,
+        "default": IIIFResourceAPIDetailSerializer,
+        "create": SourceIIIFToIIIFResourcesSerializer,
+        "list": IIIFResourceAPIListSerializer,
     }
     lookup_field = "id"
 
@@ -36,7 +58,10 @@ class IIIFResourcePublicViewSet(
     ActionBasedSerializerMixin, viewsets.ReadOnlyModelViewSet
 ):
     queryset = IIIFResource.objects.all()
-    serializer_mapping = {"default": IIIFSerializer, "list": IIIFSummarySerializer}
+    serializer_mapping = {
+        "default": IIIFResourcePublicDetailSerializer,
+        "list": IIIFResourcePublicListSerializer,
+    }
     lookup_field = "id"
 
     def get_queryset(self):
@@ -60,3 +85,26 @@ class IIIFResourcePublicViewSet(
     )
     def retrieve_iiif(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)
+
+
+class IIIFResourceAPISearchViewSet(BaseAPISearchViewSet):
+    queryset = IIIFResource.objects.all().distinct()
+    parser_classes = [IIIFResourceSearchParser]
+    filter_backends = [
+        ResourceFilter,
+        FacetFilter,
+        RankSnippetFilter,
+    ]
+    serializer_class = IIIFResourceAPISearchSerializer
+
+
+class IIIFResourcePublicSearchViewSet(BasePublicSearchViewSet):
+    queryset = IIIFResource.objects.all().distinct()
+    query_param_serializer_class = IIIFResourceSearchQueryParamDataSerializer
+    parser_classes = [IIIFResourceSearchParser]
+    filter_backends = [
+        ResourceFilter,
+        FacetFilter,
+        RankSnippetFilter,
+    ]
+    serializer_class = IIIFResourcePublicSearchSerializer

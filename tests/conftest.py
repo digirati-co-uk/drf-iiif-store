@@ -30,9 +30,3 @@ def http_service(docker_ip, docker_services):
     )
     return url
 
-
-@pytest.fixture
-def test_iiif3_manifest(tests_dir):
-    return json.load(
-        (tests_dir / "fixtures/iiif3_forager.json").open(encoding="utf-8")
-    )

@@ -1,0 +1,200 @@
+{
+    "@context": "http://iiif.io/api/presentation/3/context.json",
+    "id": "https://demo-forager.ch.digtest.co.uk/preservica/manifest/e8397915-aae5-479d-938f-a4ac6071715b",
+    "type": "Manifest",
+    "items": [
+        {
+            "id": "https://demo-forager.ch.digtest.co.uk/preservica/canvas/36cf6dd7-53a4-4172-b13b-54f96471aefa",
+            "type": "Canvas",
+            "items": [
+                {
+                    "id": "https://demo-forager.ch.digtest.co.uk/preservica/page/e5b38951-56b3-48f0-b552-07bd2fa320df",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://demo-forager.ch.digtest.co.uk/preservica/annotation/8552f2ea-cc15-48e2-9301-c37c33686b61",
+                            "body": {
+                                "id": "https://dlc.services/iiif-img/13/1/7b9f9abf-73be-4dae-bac1-1ab2ba90baed/full/!1024,1024/0/default.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg",
+                                "service": [
+                                    {
+                                        "@id": "https://dlc.services/iiif-img/13/1/e882412f-e7d1-4ec2-8264-670d18bc51e4",
+                                        "@type": "ImageService2",
+                                        "profile": "http://iiif.io/api/image/2/level2.json"
+                                    }
+                                ],
+                                "height": 6188,
+                                "width": 5004
+                            },
+                            "type": "Annotation",
+                            "target": "https://demo-forager.ch.digtest.co.uk/preservica/canvas/25c24c15-7924-4fc2-900c-8a9f931a2049",
+                            "motivation": "painting"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "en": [
+                    "The elasticity of air"
+                ]
+            },
+            "width": 5004,
+            "height": 6188,
+            "metadata": [],
+            "thumbnail": [
+                {
+                    "id": "https://dlc.services/thumbs/13/1/b2afc98c-844a-47b9-a75b-6046b1b35738/full/!828,1024/0/default.jpg",
+                    "type": "Image",
+                    "format": "image/jpeg",
+                    "width": 828,
+                    "height": 1024,
+                    "service": [
+                        {
+                            "id": "https://dlc.services/thumbs/13/1/328c6665-46b4-447d-ad89-35cab08db252",
+                            "@type": "ImageService2",
+                            "profile": "http://iiif.io/api/image/2/level2.json",
+                            "sizes": [
+                                {
+                                    "width": 828,
+                                    "height": 1024
+                                },
+                                {
+                                    "width": 323,
+                                    "height": 400
+                                },
+                                {
+                                    "width": 162,
+                                    "height": 200
+                                },
+                                {
+                                    "width": 81,
+                                    "height": 100
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }, 
+        {
+            "id": "https://demo-forager.ch.digtest.co.uk/preservica/canvas/36644735-d163-497c-bcc8-a0bbef5f6784",
+            "type": "Canvas",
+            "items": [
+                {
+                    "id": "https://demo-forager.ch.digtest.co.uk/preservica/page/f8f717a0-8bca-4340-8f97-08296435b9bc",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://demo-forager.ch.digtest.co.uk/preservica/annotation/0994436b-878e-4e17-9ab3-ae592e3890c4",
+                            "body": {
+                                "id": "https://dlc.services/iiif-img/13/1/0407d0ae-1744-4ade-9a81-24290cae8485/full/!1024,1024/0/default.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg",
+                                "service": [
+                                    {
+                                        "@id": "https://dlc.services/iiif-img/13/1/b687d23b-4fdb-47e0-aa7e-37e1663ff3b3",
+                                        "@type": "ImageService2",
+                                        "profile": "http://iiif.io/api/image/2/level2.json"
+                                    }
+                                ],
+                                "height": 6188,
+                                "width": 5004
+                            },
+                            "type": "Annotation",
+                            "target": "https://demo-forager.ch.digtest.co.uk/preservica/canvas/208a3945-7e0b-4c28-9fc0-eb7ecd134907",
+                            "motivation": "painting"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "en": [
+                    "Compressed air"
+                ]
+            },
+            "width": 5004,
+            "height": 6188,
+            "metadata": [],
+            "thumbnail": [
+                {
+                    "id": "https://dlc.services/thumbs/13/1/d86128be-73a7-45f7-b852-3cf4c1c3241e/full/!828,1024/0/default.jpg",
+                    "type": "Image",
+                    "format": "image/jpeg",
+                    "width": 828,
+                    "height": 1024,
+                    "service": [
+                        {
+                            "id": "https://dlc.services/thumbs/13/1/29fb3f19-10d6-41a3-9e4b-60c114e9bdd7",
+                            "@type": "ImageService2",
+                            "profile": "http://iiif.io/api/image/2/level2.json",
+                            "sizes": [
+                                {
+                                    "width": 828,
+                                    "height": 1024
+                                },
+                                {
+                                    "width": 323,
+                                    "height": 400
+                                },
+                                {
+                                    "width": 162,
+                                    "height": 200
+                                },
+                                {
+                                    "width": 81,
+                                    "height": 100
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "label": {
+        "en": [
+            "Pneumatica"
+        ] 
+    },
+    "metadata": [
+        {
+            "label": {"en": ["author"]}, 
+            "value": {"en": ["Ktesibios"]}
+        }
+    ],
+    "thumbnail": [
+        {
+            "id": "https://dlc.services/thumbs/13/1/91850fd7-531a-4cb7-b250-e3e588ee38d7/full/!828,1024/0/default.jpg",
+            "type": "Image",
+            "format": "image/jpeg",
+            "width": 828,
+            "height": 1024,
+            "service": [
+                {
+                    "id": "https://dlc.services/thumbs/13/1/9e6fe87c-e0cc-4e1f-8e72-c08db26d8143",
+                    "@type": "ImageService2",
+                    "profile": "http://iiif.io/api/image/2/level2.json",
+                    "sizes": [
+                        {
+                            "width": 828,
+                            "height": 1024
+                        },
+                        {
+                            "width": 323,
+                            "height": 400
+                        },
+                        {
+                            "width": 162,
+                            "height": 200
+                        },
+                        {
+                            "width": 81,
+                            "height": 100
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

@@ -37,6 +37,11 @@ LOGGING = {
         #        },
         "api": {"level": "INFO", "propagate": True, "handlers": ["console"]},
         "iiif_store": {"level": "DEBUG", "propagate": True, "handlers": ["console"]},
+        "search_service": {
+            "level": "DEBUG",
+            "propagate": True,
+            "handlers": ["console"],
+        },
     },
 }
 
@@ -62,10 +67,11 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    
     "django_extensions",
-
+    "django_filters",
+    "django_q",
     "rest_framework",
+    "search_service",
     "iiif_store",
 ]
 
@@ -156,6 +162,8 @@ REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 25,
 }
+
+SEARCH_SERVICE = {}
 
 IIIF_STORE = {
     "CANONICAL_HOSTNAME": env.str("CANONICAL_HOSTNAME", "http://localhost:8000")
