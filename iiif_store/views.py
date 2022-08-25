@@ -34,6 +34,8 @@ from .serializers import (
     IIIFResourcePublicListSerializer,
     IIIFResourcePublicSearchSerializer,
     IIIFResourceSearchQueryParamDataSerializer,
+    IIIFResourceAPIImageSerializer,
+    IIIFAPIInfoSerializer,
 )
 
 # This should be replaced by an import from a utils package.
@@ -50,8 +52,25 @@ class IIIFResourceAPIViewSet(ActionBasedSerializerMixin, viewsets.ModelViewSet):
         "default": IIIFResourceAPIDetailSerializer,
         "create": SourceIIIFToIIIFResourcesSerializer,
         "list": IIIFResourceAPIListSerializer,
+        "retrieve_images": IIIFResourceAPIImageSerializer,
     }
     lookup_field = "id"
+
+    @action(
+        detail=True,
+        url_path=r"images",
+        url_name="images",
+    )
+    def retrieve_images(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+
+
+class IIIFServicesAPIViewSet(viewsets.GenericViewSet):
+    @action(detail=False, methods=["get", "post"])
+    def info(self, request, *args, **kwargs):
+        iiif_json = request.data.get("iiif_json")
+        serializer = IIIFAPIInfoSerializer(iiif_json)
+        return Response(serializer.data)
 
 
 class IIIFResourcePublicViewSet(

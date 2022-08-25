@@ -21,6 +21,11 @@ from search_service.models import ResourceRelationship
 from .models import (
     IIIFResource,
 )
+from .fields import (
+    IIIFImageURLField,
+    IIIFThumbnailURLField,
+)
+
 from .utils import HyperlinkedMultiArgRelatedField
 from .settings import iiif_store_settings
 
@@ -188,6 +193,34 @@ class IIIFResourceAPIDetailSerializer(serializers.HyperlinkedModelSerializer):
                 "lookup_field": "id",
             }
         }
+
+
+class IIIFResourceAPIImageSerializer(serializers.HyperlinkedModelSerializer):
+    image_url = IIIFImageURLField(source="iiif_json")
+    thumbnail_url = IIIFThumbnailURLField(source="iiif_json")
+
+    class Meta:
+        model = IIIFResource
+        fields = [
+            "url",
+            "id",
+            "iiif_type",
+            "image_url",
+            "thumbnail_url",
+            "thumbnail",
+            "iiif_json",
+        ]
+        extra_kwargs = {
+            "url": {
+                "view_name": "api:iiif_store:iiifresource-images",
+                "lookup_field": "id",
+            }
+        }
+
+
+class IIIFAPIInfoSerializer(serializers.Serializer):
+    image_url = IIIFImageURLField(source="*")
+    thumbnail_url = IIIFThumbnailURLField(source="*")
 
 
 class IIIFResourceAPIListSerializer(serializers.HyperlinkedModelSerializer):
