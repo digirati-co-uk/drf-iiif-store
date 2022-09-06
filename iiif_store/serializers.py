@@ -22,8 +22,12 @@ from .models import (
     IIIFResource,
 )
 from .fields import (
+    IIIFImageResourceField,
+    IIIFThumbnailResourceField,
     IIIFImageURLField,
     IIIFThumbnailURLField,
+    IIIFPresentationVersionField,
+    IIIFPresentationTypeField,
 )
 
 from .utils import HyperlinkedMultiArgRelatedField
@@ -193,34 +197,6 @@ class IIIFResourceAPIDetailSerializer(serializers.HyperlinkedModelSerializer):
                 "lookup_field": "id",
             }
         }
-
-
-class IIIFResourceAPIImageSerializer(serializers.HyperlinkedModelSerializer):
-    image_url = IIIFImageURLField(source="iiif_json")
-    thumbnail_url = IIIFThumbnailURLField(source="iiif_json")
-
-    class Meta:
-        model = IIIFResource
-        fields = [
-            "url",
-            "id",
-            "iiif_type",
-            "image_url",
-            "thumbnail_url",
-            "thumbnail",
-            "iiif_json",
-        ]
-        extra_kwargs = {
-            "url": {
-                "view_name": "api:iiif_store:iiifresource-images",
-                "lookup_field": "id",
-            }
-        }
-
-
-class IIIFAPIInfoSerializer(serializers.Serializer):
-    image_url = IIIFImageURLField(source="*")
-    thumbnail_url = IIIFThumbnailURLField(source="*")
 
 
 class IIIFResourceAPIListSerializer(serializers.HyperlinkedModelSerializer):
@@ -447,3 +423,14 @@ class IIIFResourceToIndexableSerializer(BaseModelToIndexableSerializer):
                         self._indexables_from_field(field_instance, **field_lookup)
                     )
         return indexables
+
+
+class IIIFInfoSerializer(serializers.Serializer):
+    """Version agnostic extraction of information from the the provided iiif."""
+
+    iiif_version = IIIFPresentationVersionField(source="*")
+    iiif_type = IIIFPresentationTypeField(source="*")
+    image_resource = IIIFImageResourceField(source="*")
+    image_url = IIIFImageURLField(source="*")
+    thumbnail_resource = IIIFThumbnailResourceField(source="*")
+    thumbnail_url = IIIFThumbnailURLField(source="*")
