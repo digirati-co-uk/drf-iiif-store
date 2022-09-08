@@ -34,6 +34,7 @@ from .serializers import (
     IIIFResourcePublicListSerializer,
     IIIFResourcePublicSearchSerializer,
     IIIFResourceSearchQueryParamDataSerializer,
+    IIIFInfoSerializer,
 )
 
 # This should be replaced by an import from a utils package.
@@ -52,6 +53,16 @@ class IIIFResourceAPIViewSet(ActionBasedSerializerMixin, viewsets.ModelViewSet):
         "list": IIIFResourceAPIListSerializer,
     }
     lookup_field = "id"
+
+
+class IIIFServicesAPIViewSet(viewsets.GenericViewSet):
+    """Provides endpoints to which IIIF data can be posted for
+    serialization or other processing."""
+
+    @action(detail=False, methods=["get", "post"])
+    def info(self, request, *args, **kwargs):
+        serializer = IIIFInfoSerializer(request.data)
+        return Response(serializer.data)
 
 
 class IIIFResourcePublicViewSet(
