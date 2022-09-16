@@ -103,6 +103,20 @@ class IIIFImageResourceField(serializers.CharField):
         return {}
 
 
+class IIIFManifestCanvasesField(serializers.Serializer):
+    """Version-agnostic retrieval of all canvases in a IIIF Manifest."""
+
+    def to_representation(self, iiif_resource):
+        if sequences := iiif_resource.get("sequences"):
+            return [canvas for seq in sequences for canvas in seq.get("canvases")]
+        if items := iiif_resource.get("items"):
+            return items
+
+        # TODO: Add structures
+        else:
+            return []
+
+
 class IIIFThumbnailResourceField(IIIFImageResourceField):
     """Version-agnostic retrieval of the thumbnail image resource for a
     a IIIF Resource, either from the thumbnail property, or the primary image resource."""

@@ -28,6 +28,8 @@ from .fields import (
     IIIFThumbnailURLField,
     IIIFPresentationVersionField,
     IIIFPresentationTypeField,
+
+    IIIFManifestCanvasesField, 
 )
 
 from .utils import HyperlinkedMultiArgRelatedField
@@ -434,3 +436,4 @@ class IIIFInfoSerializer(serializers.Serializer):
     image_url = IIIFImageURLField(source="*")
     thumbnail_resource = IIIFThumbnailResourceField(source="*")
     thumbnail_url = IIIFThumbnailURLField(source="*")
+    canvases = IIIFManifestCanvasesField(source="*")
