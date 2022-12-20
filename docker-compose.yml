@@ -14,7 +14,7 @@ services:
     links:
       - postgres
     volumes:
-      - ./iiif_store:/app/iiif_store
+      - ./iiif_store:/app/iiif_store/
     env_file:
       - .env
     ports:
