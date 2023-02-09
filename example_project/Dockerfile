@@ -3,7 +3,7 @@ FROM python:3.10-slim-bullseye
 ENV PYTHONUNBUFFERED 1
 
 RUN apt-get update
-RUN apt-get install -y nginx gdal-bin git
+RUN apt-get install -y nginx gdal-bin git libpq-dev python3-dev gcc cmake pkg-config g++ build-essential clang
 
 # Set up Nginx
 RUN addgroup --system nginx
